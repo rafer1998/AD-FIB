@@ -75,6 +75,7 @@ public class register extends HttpServlet {
                 statement.setString(2, password);                                    
                 statement.executeUpdate();
                 out.println("<h4>Te has registrado correctamente!</h4>");
+                out.println("<form action=\"menu.jsp\" method=\"POST\"> <p> <input type=\"submit\" value=\"Volver al menu\"></p></form>");
             }            
             
             /* TODO output your page here. You may use following sample code. */
