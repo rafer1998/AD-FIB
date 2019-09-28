@@ -22,12 +22,11 @@ int n = rand.nextInt(1000) + 1;
     	<form action="registrarImagen" method="POST">
         	<p>Titulo: <input type="text" name="titulo" size="40"></p>
         	<p>Descripcion: <input type="text" name="descripcion" size="40"></p>
-        	<p>Palabras clave: <input type="text" name="palabras_clave" size="40"></p>
-        	<p>Autor: <input type="text" name="autor" size="40"></p>
-        	<label for="date">Fecha creación:</label>
-        	<input type="date" name="fecha" value="2010-12-16;">
-        	<label for="avatar">Choose a profile picture:</label>
-        	<input type="file" id="fichero" name="fichero" accept="image/png, image/jpeg">
+        	<p>Palabras clave: <input type="text" name="palabras_clave" size="40" placeholder="Palabras separadas con ';'"></p>        	
+                <p><label for="date">Fecha creación:</label>
+                    <input type="date" name="fecha" value="2010-12-16;"></p>
+                <p><label for="avatar">Seleccionar imagen:</label>
+                    <input type="file" id="fichero" name="fichero" accept="image/png, image/jpeg"></p>                
         	<p>
             	<input type="submit" value="Enviar">
             	<input type="reset" value="Borrar">

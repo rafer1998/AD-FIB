@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,8 +68,13 @@ public class login extends HttpServlet {
                 }                
             }
             
-            if(exist)
+            Cookie autor;
+            if(exist){
+                autor = new Cookie("autor",usuario);
+                autor.setMaxAge(30*60);
+                response.addCookie(autor);
                 response.sendRedirect("menu.jsp");
+            }
             else
                 response.sendRedirect("error.jsp");
             

@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import javax.servlet.http.Cookie;
 
 /**
  *
@@ -44,7 +45,14 @@ public class registrarImagen extends HttpServlet {
         String titulo = request.getParameter("titulo");            
         String descripcion = request.getParameter("descripcion");        
         String palabras_clave = request.getParameter("palabras_clave");
-        String autor = request.getParameter("autor");        
+        
+        String autor = "NULL";
+        Cookie[] cookies = request.getCookies();
+        if(cookies !=null){
+            for(Cookie cookie : cookies){
+                  if(cookie.getName().equals("autor")) autor = cookie.getValue();
+            }
+        }        
         String fecha_creacion = request.getParameter("fecha");  
         Date date = new Date();
         DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
@@ -63,17 +71,22 @@ public class registrarImagen extends HttpServlet {
             if (rs.next()) {
                 id = rs.getInt(1);
             }
-            query = "insert into imagen values(?,?,?,?,?,?,?,?)";
-            statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-            statement.setString(2, titulo); 
-            statement.setString(3, descripcion);
-            statement.setString(4, palabras_clave);
-            statement.setString(5, autor);
-            statement.setString(6, fecha_creacion);
-            statement.setString(7, fecha_alta);
-            statement.setString(8, fichero);
-            statement.executeUpdate();
+            try{
+                query = "insert into imagen values(?,?,?,?,?,?,?,?)";
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, id);
+                statement.setString(2, titulo); 
+                statement.setString(3, descripcion);
+                statement.setString(4, palabras_clave);
+                statement.setString(5, autor);
+                statement.setString(6, fecha_creacion);
+                statement.setString(7, fecha_alta);
+                statement.setString(8, fichero);
+                statement.executeUpdate();                
+            }
+            catch(Exception e){
+                response.sendRedirect("error.jsp");
+            }
             out.println("<h4>Has subido la imagen correctamente!</h4>");
             
             /* TODO output your page here. You may use following sample code. */
