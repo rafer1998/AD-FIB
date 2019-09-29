@@ -54,7 +54,7 @@ public class registrarImagen extends HttpServlet {
         final String path = ("C:\\Users\\ruben\\Documents\\Universidad\\3-2Q\\AD\\Laboratorio");
         final Part filePart = request.getPart("fichero");
         String nombrefichero = getFileName(filePart);
-        
+        String extensionfichero = getExtensionName(filePart);        
         
         String titulo = request.getParameter("titulo");            
         String descripcion = request.getParameter("descripcion");        
@@ -72,7 +72,6 @@ public class registrarImagen extends HttpServlet {
         DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         String fecha_alta = dateformat.format(date);
         Connection connection = null; 
-        System.out.println("EL nombre del fichero" + path + nombrefichero);
         
         try {
             PreparedStatement statement;
@@ -100,11 +99,10 @@ public class registrarImagen extends HttpServlet {
             }
             catch(Exception e){
                 response.sendRedirect("error.jsp");
-            }
-            out.println("<h4>Has subido la imagen correctamente!</h4>");
+            }            out.println("<h4>Has subido la imagen correctamente!</h4>");
             
             OutputStream outS = null;
-            outS = new FileOutputStream(new File(path + File.separator + nombrefichero + ".png"));
+            outS = new FileOutputStream(new File(path + File.separator + nombrefichero + extensionfichero));
             InputStream inS = null;
             inS = filePart.getInputStream();
             
@@ -113,11 +111,7 @@ public class registrarImagen extends HttpServlet {
 
             while ((read = inS.read(bytes)) != -1) {
                 outS.write(bytes, 0, read);
-            }
-            System.out.println("New file " + nombrefichero + " created at " + path);
-            
-            
-            
+            }  
             
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
@@ -137,6 +131,12 @@ public class registrarImagen extends HttpServlet {
     protected String getFileName(Part p){
         String GUIDwithext = Paths.get(p.getSubmittedFileName()).getFileName().toString();
         String GUID = GUIDwithext.substring(0, GUIDwithext.lastIndexOf('.'));
+        return GUID;
+    }
+    
+    protected String getExtensionName(Part p){
+        String GUIDwithext = Paths.get(p.getSubmittedFileName()).getFileName().toString();
+        String GUID = GUIDwithext.substring(GUIDwithext.lastIndexOf('.'));
         return GUID;
     }
 
