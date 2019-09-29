@@ -4,8 +4,13 @@
  * and open the template in the editor.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.sql.Connection;
 //import java.sql.Date;
 import java.sql.DriverManager;
@@ -19,13 +24,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.Part;
 
 /**
  *
  * @author ruben.barcelo
  */
 @WebServlet(urlPatterns = {"/registrarImagen"})
+@MultipartConfig(location="/tmp", fileSizeThreshold=1024*1024, 
+    maxFileSize=1024*1024*5, maxRequestSize=1024*1024*5*5)
 public class registrarImagen extends HttpServlet {
 
     /**
@@ -40,8 +49,13 @@ public class registrarImagen extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-         PrintWriter out = response.getWriter();
-
+        PrintWriter out = response.getWriter();
+        
+        final String path = ("C:\\Users\\ruben\\Documents\\Universidad\\3-2Q\\AD\\Laboratorio");
+        final Part filePart = request.getPart("fichero");
+        String nombrefichero = getFileName(filePart);
+        
+        
         String titulo = request.getParameter("titulo");            
         String descripcion = request.getParameter("descripcion");        
         String palabras_clave = request.getParameter("palabras_clave");
@@ -57,8 +71,8 @@ public class registrarImagen extends HttpServlet {
         Date date = new Date();
         DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         String fecha_alta = dateformat.format(date);
-        String fichero = request.getParameter("fichero");
         Connection connection = null; 
+        System.out.println("EL nombre del fichero" + path + nombrefichero);
         
         try {
             PreparedStatement statement;
@@ -81,13 +95,29 @@ public class registrarImagen extends HttpServlet {
                 statement.setString(5, autor);
                 statement.setString(6, fecha_creacion);
                 statement.setString(7, fecha_alta);
-                statement.setString(8, fichero);
+                statement.setString(8, nombrefichero);
                 statement.executeUpdate();                
             }
             catch(Exception e){
                 response.sendRedirect("error.jsp");
             }
             out.println("<h4>Has subido la imagen correctamente!</h4>");
+            
+            OutputStream outS = null;
+            outS = new FileOutputStream(new File(path + File.separator + nombrefichero + ".png"));
+            InputStream inS = null;
+            inS = filePart.getInputStream();
+            
+            int read = 0;
+            final byte[] bytes = new byte[1024];
+
+            while ((read = inS.read(bytes)) != -1) {
+                outS.write(bytes, 0, read);
+            }
+            System.out.println("New file " + nombrefichero + " created at " + path);
+            
+            
+            
             
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
@@ -103,6 +133,11 @@ public class registrarImagen extends HttpServlet {
          catch (Exception e) {
             System.err.println(e.getMessage());
         }
+    }
+    protected String getFileName(Part p){
+        String GUIDwithext = Paths.get(p.getSubmittedFileName()).getFileName().toString();
+        String GUID = GUIDwithext.substring(0, GUIDwithext.lastIndexOf('.'));
+        return GUID;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -19,7 +19,7 @@ int n = rand.nextInt(1000) + 1;
 	<body>
     	<h1><i>Registrar Imagen</i></h1>
    	 
-    	<form action="registrarImagen" method="POST">
+        <form action="registrarImagen" method="POST" enctype="multipart/form-data">
         	<p>Titulo: <input type="text" name="titulo" size="40"></p>
         	<p>Descripcion: <input type="text" name="descripcion" size="40"></p>
         	<p>Palabras clave: <input type="text" name="palabras_clave" size="40" placeholder="Palabras separadas con ';'"></p>        	
