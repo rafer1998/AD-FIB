@@ -26,22 +26,22 @@
                 query = "select * from imagen";
                 statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery();
-              
-                while(rs.next()){               
-                    System.out.println("Titulo: " + rs.getString("TITULO"));   
-                    
+                %>                
+                <table>                    
+                <%
+                    while(rs.next()){
                 %>  
-                    <h1> Imagen <%=rs.getString("TITULO")%></h1>  
-                     
-                     
-                    <img src="http://localhost:8080/Practica2/imagenes/icono.png">
-                  
-       
-                     
-                     
-                     
-                      <%  
-                }
+                          <tr>
+                            <td><%=rs.getString("TITULO")%></td>
+                            <td><form action="modificarImagen.jsp"> <input type="submit" value="Previsualizar Imagen"> </form></td>
+                            <td><form action="modificarImagen.jsp"> <input type="submit" value="Modificar Imagen"> </form></td>
+                          </tr>
+                <%  
+                        //<img src="http://localhost:8080/Practica2/imagenes/icono.png">  
+                    }
+                %>
+                </table>
+                <%
             }
             catch(Exception e){
                 System.err.println(e.getMessage());
