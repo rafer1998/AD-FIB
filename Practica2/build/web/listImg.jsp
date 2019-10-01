@@ -13,26 +13,50 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Imagenes</h1>
-     
+        <h1>Lista de Imagenes</h1>     
           <%
-            Connection connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
-            //1c. Construct our SQL statement
-            String query = "select * from usuarios";
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet rs = statement.executeQuery();
+            Connection connection = null;
+            try{
+                String query;
+                PreparedStatement statement;
+                Class.forName("org.apache.derby.jdbc.ClientDriver");  
+
+                connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
+
+                query = "select * from imagen";
+                statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery();
+              
+                while(rs.next()){               
+                    System.out.println("Titulo: " + rs.getString("TITULO"));   
+                    
+                %>  
+                    <h1> Imagen <%=rs.getString("TITULO")%></h1>  
+                     
+                     
+                    <img src="http://localhost:8080/Practica2/imagenes/icono.png">
+                  
        
-            System.out.println("Error1");
-            System.out.println("ID USUARIO:      " + rs.getString("id_usuario"));
-            if(rs.next()) {     
-                System.out.println("Error2");
-                rs.beforeFirst();  
-                while(rs.next())   
-                    System.out.println("Error3");
-                {
-                    System.out.println(rs.getString("id_usuario"));
-                }  
+                     
+                     
+                     
+                      <%  
+                }
             }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }
+            finally {
+                try {
+                    if (connection != null) {
+                        connection.close();
+                    }
+                } catch (SQLException e) {
+                    // connection close failed.
+                    System.err.println(e.getMessage());
+                }
+            }
+           
 
          %>     
         

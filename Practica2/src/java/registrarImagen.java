@@ -51,7 +51,7 @@ public class registrarImagen extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         
-        final String path = ("C:\\Users\\ruben\\Documents\\Universidad\\3-2Q\\AD\\Laboratorio");
+        final String path = ("C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica2\\web\\imagenes");
         final Part filePart = request.getPart("fichero");
         String nombrefichero = getFileName(filePart);
         String extensionfichero = getExtensionName(filePart);        
