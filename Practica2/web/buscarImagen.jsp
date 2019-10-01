@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Buscar Imagen</h1>
-        <form action="listImg.jsp">
+        <form action="buscarImagen">
          Inserta los campos de busqueda<br>
         <input type="text" name="campos_busqueda" value="">
         <input type="submit" value="Enviar">
