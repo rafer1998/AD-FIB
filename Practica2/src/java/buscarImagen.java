@@ -62,7 +62,7 @@ public class buscarImagen extends HttpServlet {
                 num = rs2.getInt(1);
             }
             if (num > 0){
-                out.println("<table style=\"width:100%\"> <tr>\n <th>Id</th>\n <th>Titulo</th>\n <th>Descripcion</th>\n <th>Autor</th>\n <th>Fecha Creación</th>\n <th>Fecha_Alta</th>\n<th>Nombre Fichero</th>\n</tr> ");
+                out.println("<table style=\"width:100%\"> <tr>\n <th>Id</th>\n <th>Titulo</th>\n <th>Descripcion</th>\n <th>Autor</th>\n <th>Fecha Creación</th>\n <th>Fecha_Alta</th>\n<th>Nombre Fichero</th>\n<th>Modificar Foto</th>\n</tr> ");
                 while (rs.next()) {
                     String palabra = rs.getString("palabras_clave");
                     String[] parts = palabra.split(";");
@@ -78,7 +78,11 @@ public class buscarImagen extends HttpServlet {
                                String fechaf = rs.getString("fecha_creacion");
                                String fechaa = rs.getString("fecha_alta");
                                String nomf = rs.getString("nombre_fichero");
-                               out.println("<tr> <td> "+idf+" </td><td>"+titulof+"</td><td>"+descripcionf+"</td><td>"+autorf+"</td><td>"+fechaf+"</td><td>"+fechaa+"</td><td>"+nomf+"</td></tr>");     
+                               out.println("<tr> <td> "+idf+" </td><td>"+titulof+"</td><td>"+descripcionf+"</td><td>"+autorf+"</td><td>"+fechaf+"</td><td>"+fechaa+"</td><td>"+nomf+"</td>"); 
+                               if (autorf.equals(autor)){
+                                   out.println("<td><form action=\"modificarImagen.jsp\"> <input type=\"submit\" value=\"Modificar Imagen\"> </form></td></tr>");
+                               }
+                               else out.println("</tr>");
                             }
                         }
                     }
