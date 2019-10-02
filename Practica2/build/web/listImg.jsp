@@ -11,6 +11,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+        <script type="text/javascript">                
+            function picture(nombreFichero){ 
+                var pic = "http://localhost:8080/Practica2/imagenes/";
+                var pic2 = nombreFichero;
+                var pic3 = pic.concat(pic2)
+                document.getElementById(pic3).src = pic3.replace('90x90', '225x225');
+                document.getElementById(pic3).style.display='block';
+            } 
+       </script> 
     </head>
     <body>
         <h1>Lista de Imagenes</h1>     
@@ -32,7 +41,10 @@
                     while(rs.next()){
                 %>  
                           <tr>
-                            <td><%=rs.getString("TITULO")%></td>
+                            <td><%=rs.getString("NOMBRE_FICHERO")%></td>
+                            <td><img style="display:none;" id="<%=rs.getString("NOMBRE_FICHERO")%>" src="http://localhost:8080/Practica2/imagenes/<%=rs.getString("NOMBRE_FICHERO")%>" /></td>
+                            <td><button onclick="picture(<%=rs.getString("NOMBRE_FICHERO")%>)">Previsualizar</button></td>
+                            
                             <td><form action="modificarImagen.jsp"> <input type="submit" value="Previsualizar Imagen"> </form></td>
                             <td><form action="modificarImagen.jsp"> <input type="submit" value="Modificar Imagen"> </form></td>
                           </tr>

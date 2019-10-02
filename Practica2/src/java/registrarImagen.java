@@ -94,7 +94,7 @@ public class registrarImagen extends HttpServlet {
                 statement.setString(5, autor);
                 statement.setString(6, fecha_creacion);
                 statement.setString(7, fecha_alta);
-                statement.setString(8, nombrefichero);
+                statement.setString(8, nombrefichero+extensionfichero);
                 statement.executeUpdate();                
             }
             catch(Exception e){
