@@ -32,6 +32,10 @@ int n = rand.nextInt(1000) + 1;
             	<input type="reset" value="Borrar">
         	</p>
     	</form>
+        
+        <form action="menu.jsp" method="POST" >        	
+            	<input type="submit" value="Menu">
+    	</form>
    	 
 	</body>
 </html>

@@ -14,9 +14,13 @@
     <body>
         <h1>Buscar Imagen</h1>
         <form action="buscarImagen">
-         Inserta los campos de busqueda<br>
-        <input type="text" name="campos_busqueda" value="">
-        <input type="submit" value="Enviar">
+            <h3>Inserta los campos de busqueda</h3>
+            <input type="text" name="campos_busqueda" value="">
+            <input type="submit" value="Enviar">
         </form>
+        <br>
+        <form action="menu.jsp" method="POST" >        	
+            <input type="submit" value="Menu">
+    	</form>
     </body>
 </html>

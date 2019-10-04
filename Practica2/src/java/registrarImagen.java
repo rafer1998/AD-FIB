@@ -113,16 +113,9 @@ public class registrarImagen extends HttpServlet {
                 outS.write(bytes, 0, read);
             }  
             
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet registrarImagen</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet registrarImagen at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
+            out.println("<input type=\"submit\" value=\"Volver al menu\">");
+            out.println("</form>");   
         }
          catch (Exception e) {
             System.err.println(e.getMessage());

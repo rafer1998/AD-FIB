@@ -10,10 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,30 +36,41 @@ public class buscarImagen extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
         String palclavebusqueda = request.getParameter("campos_busqueda");
         String vpalclavebusqueda [] = palclavebusqueda.split(";");
         
-        String autor = "NULL";   
+        String autor = "NULL";         
         HttpSession misession= (HttpSession) request.getSession();
         autor = (String) misession.getAttribute("autor");
         
         Connection connection = null; 
-        try (PrintWriter out = response.getWriter()) {
+        PrintWriter out = response.getWriter();
+        try{
+            out.println("<h1> Imagenes encontradas </h1>");
+            
             int num = -1;
             PreparedStatement statement,statement2;
             String query, query2;
-            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");        
+            
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
             query = "select * from imagen";
             query2 = "select count(id) from imagen";
+            
             statement = connection.prepareStatement(query);
             statement2 = connection.prepareStatement(query2);
             ResultSet rs = statement.executeQuery(); 
             ResultSet rs2 = statement2.executeQuery(); 
+            
             if (rs2.next()) {
                 num = rs2.getInt(1);
             }
             if (num > 0){
-                out.println("<table style=\"width:100%\"> <tr>\n <th>Id</th>\n <th>Titulo</th>\n <th>Descripcion</th>\n <th>Autor</th>\n <th>Fecha Creación</th>\n <th>Fecha_Alta</th>\n<th>Nombre Fichero</th>\n<th>Modificar Foto</th>\n</tr> ");
+                out.println("<table style=\"width:100%\"> "
+                        + "<tr>"
+                        + "<th>Id</th> <th>Titulo</th> <th>Descripcion</th> <th>Autor</th> <th>Fecha Creación</th> <th>Fecha_Alta</th> <th>Nombre Fichero</th> <th>Modificar Foto</th>"
+                        + "</tr> ");
                 while (rs.next()) {
                     String palabra = rs.getString("palabras_clave");
                     String[] parts = palabra.split(";");
@@ -77,7 +86,8 @@ public class buscarImagen extends HttpServlet {
                                String fechaf = rs.getString("fecha_creacion");
                                String fechaa = rs.getString("fecha_alta");
                                String nomf = rs.getString("nombre_fichero");
-                               out.println("<tr> <td> "+idf+" </td><td>"+titulof+"</td><td>"+descripcionf+"</td><td>"+autorf+"</td><td>"+fechaf+"</td><td>"+fechaa+"</td><td>"+nomf+"</td>"); 
+                               out.println("<tr> "
+                                       + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descripcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>"); 
                                if (autorf.equals(autor)){
                                    out.println("<td><form action=\"modificarImagen.jsp\"> "
                                                 + "<input type=\"submit\" value=\"Modificar Imagen\"> "
@@ -88,24 +98,23 @@ public class buscarImagen extends HttpServlet {
                                                 + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
                                                 + "</form></td>"
                                                 + "</tr>");
+                                   out.println("<td><form action=\"eliminarImagen\" method=\"POST\"> "
+                                                + "<input type=\"submit\" value=\"Eliminar Imagen\"> "
+                                                + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
+                                                + "<input type=\"hidden\" name=\"nombre_fichero\" value =\"" + nomf + "\">"
+                                                + "</form></td>");
                                }                               
-                               else out.println("</tr>");
+                               out.println("</tr></table>");
                             }
                         }
                     }
                 }
                 
-            }
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet buscarImagen</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet buscarImagen at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            } 
+            
+            out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
+            out.println("<input type=\"submit\" value=\"Volver al menu\">");
+            out.println("</form>");   
         }
         catch (Exception e) {
             System.err.println(e.getMessage());

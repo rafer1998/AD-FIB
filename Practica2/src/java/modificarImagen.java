@@ -73,16 +73,9 @@ public class modificarImagen extends HttpServlet {
             }
             out.println("<h4>Has modificado la imagen correctamente!</h4>");
             
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet modificarImagen</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet modificarImagen at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
+            out.println("<input type=\"submit\" value=\"Volver al menu\">");
+            out.println("</form>");   
         }
         catch (Exception e) {
             System.err.println(e.getMessage());

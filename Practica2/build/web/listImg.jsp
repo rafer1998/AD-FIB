@@ -59,6 +59,11 @@
                                         
                                         
                                 </form></td>
+                                <td><form action="eliminarImagen" method="POST">  
+                                        <input type="submit" value="Eliminar Imagen"> 
+                                        <input type="hidden" name="id" value ="<%=rs.getString("ID")%>">  
+                                        <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">
+                                </form></td>
                             <%   
                             }
                             %> 
@@ -67,6 +72,9 @@
                     }
                 %>
                 </table>
+                <form action="menu.jsp" method="POST" >        	
+                    <input type="submit" value="Menu">
+                </form>
                 <%
             }
             catch(Exception e){
