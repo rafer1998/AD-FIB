@@ -5,25 +5,25 @@
 --%>
 
 <%@page import="java.sql.*"%>
+<%@page import="javax.servlet.*"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <script type="text/javascript">                
-            function picture(nombreFichero){ 
-                var pic = "http://localhost:8080/Practica2/imagenes/";
-                var pic2 = nombreFichero;
-                var pic3 = pic.concat(pic2)
-                document.getElementById(pic3).src = pic3.replace('90x90', '225x225');
-                document.getElementById(pic3).style.display='block';
-            } 
-       </script> 
+        <title>listImg</title>
     </head>
     <body>
         <h1>Lista de Imagenes</h1>     
           <%
+            String autor = "NULL";
+            Cookie[] cookies = request.getCookies();
+            if(cookies !=null){
+                for(Cookie cookie : cookies){
+                      if(cookie.getName().equals("autor")) autor = cookie.getValue();
+                }
+            }
+              
             Connection connection = null;
             try{
                 String query;
@@ -35,22 +35,45 @@
                 query = "select * from imagen";
                 statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery();
+                
+                //Sesiones
+                HttpSession misession= request.getSession(true);
+                
+                String autorImg = "null";
                 %>                
                 <table>                    
                 <%
-                    while(rs.next()){
+                    while(rs.next()){                        
+                           autorImg = rs.getString("AUTOR");
+                           System.out.println("autorImg: " + autorImg);
+                           System.out.println("usuario " + autor);
                 %>  
                           <tr>
-                            <td><%=rs.getString("NOMBRE_FICHERO")%></td>
-                            <td><img style="display:none;" id="<%=rs.getString("NOMBRE_FICHERO")%>" src="http://localhost:8080/Practica2/imagenes/<%=rs.getString("NOMBRE_FICHERO")%>" /></td>
-                            <td><button onclick="picture(<%=rs.getString("NOMBRE_FICHERO")%>)">Previsualizar</button></td>
-                            
-                            <td><form action="modificarImagen.jsp"> <input type="submit" value="Previsualizar Imagen"> </form></td>
-                            <td><form action="modificarImagen.jsp"> <input type="submit" value="Modificar Imagen"> </form></td>
+                            <td><%=rs.getString("NOMBRE_FICHERO")%></td>   
+                            <td><form action="mostrarImagen"> 
+                                    <input type="submit" value="Previsualizar Imagen"> 
+                                    <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">
+                            </form></td>
+                            <%
+                            if(autorImg.equals(autor)){
+                            %> 
+                                <td><form action="modificarImagen.jsp" method="POST">  
+                                        <input type="submit" value="Modificar Imagen"> 
+                                        <input type="hidden" name="titulo" value ="<%=rs.getString("TITULO")%>">  
+                                        <input type="hidden" name="descripcion" value ="<%=rs.getString("DESCRIPCION")%>">
+                                        <input type="hidden" name="palabras_clave" value ="<%=rs.getString("PALABRAS_CLAVE")%>">
+                                        <input type="hidden" name="fecha_creacion" value ="<%=rs.getString("FECHA_CREACION")%>">
+                                        
+                                        
+                                </form></td>
+                            <%   
+                            }
+                            %> 
                           </tr>
                 <%  
-                        //<img src="http://localhost:8080/Practica2/imagenes/icono.png">  
                     }
+                        System.out.println("path fichero: " + misession.getAttribute("url"+1));
+                        System.out.println("path fichero: " + misession.getAttribute("url"+2));
                 %>
                 </table>
                 <%

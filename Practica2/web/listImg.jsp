@@ -16,6 +16,14 @@
     <body>
         <h1>Lista de Imagenes</h1>     
           <%
+            String autor = "NULL";
+            Cookie[] cookies = request.getCookies();
+            if(cookies !=null){
+                for(Cookie cookie : cookies){
+                      if(cookie.getName().equals("autor")) autor = cookie.getValue();
+                }
+            }
+              
             Connection connection = null;
             try{
                 String query;
@@ -30,11 +38,15 @@
                 
                 //Sesiones
                 HttpSession misession= request.getSession(true);
-               
+                
+                String autorImg = "null";
                 %>                
                 <table>                    
                 <%
-                    while(rs.next()){
+                    while(rs.next()){                        
+                           autorImg = rs.getString("AUTOR");
+                           System.out.println("autorImg: " + autorImg);
+                           System.out.println("usuario " + autor);
                 %>  
                           <tr>
                             <td><%=rs.getString("NOMBRE_FICHERO")%></td>   
@@ -42,7 +54,21 @@
                                     <input type="submit" value="Previsualizar Imagen"> 
                                     <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">
                             </form></td>
-                            <td><form action="modificarImagen.jsp"> <input type="submit" value="Modificar Imagen"> </form></td>
+                            <%
+                            if(autorImg.equals(autor)){
+                            %> 
+                                <td><form action="modificarImagen.jsp" method="POST">  
+                                        <input type="submit" value="Modificar Imagen"> 
+                                        <input type="hidden" name="titulo" value ="<%=rs.getString("TITULO")%>">  
+                                        <input type="hidden" name="descripcion" value ="<%=rs.getString("DESCRIPCION")%>">
+                                        <input type="hidden" name="palabras_clave" value ="<%=rs.getString("PALABRAS_CLAVE")%>">
+                                        <input type="hidden" name="fecha_creacion" value ="<%=rs.getString("FECHA_CREACION")%>">
+                                        
+                                        
+                                </form></td>
+                            <%   
+                            }
+                            %> 
                           </tr>
                 <%  
                     }

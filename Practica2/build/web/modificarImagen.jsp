@@ -9,9 +9,27 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Modificar Imagen</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Modifica Imagen</h1>
+        <%         
+        String titulo = request.getParameter("titulo");
+        String descripcion = request.getParameter("descripcion");
+        String palabras_clave = request.getParameter("palabras_clave");
+        String fecha_creacion = request.getParameter("fecha_creacion");
+        
+        %>
+        <h1><%=titulo%></h1>
+        <form action="modificarImagen" method="POST" enctype="multipart/form-data">
+            <p>Titulo: <input type="text" name="titulo" size="40" value="<%=titulo%>" required></p>
+        	<p>Descripcion: <input type="text" name="descripcion" size="40" value="<%=descripcion%>" required></p>
+        	<p>Palabras clave: <input type="text" name="palabras_clave" size="40" value="<%=palabras_clave%>" placeholder="Palabras separadas con ';'" required></p>        	
+                <p><label for="date">Fecha creación:</label>
+                    <input type="date" name="fecha" value="<%=fecha_creacion%>" required></p>            
+            	<input type="submit" value="Enviar">
+            	<input type="reset" value="Borrar">
+        	</p>
+    	</form>
     </body>
 </html>
