@@ -80,8 +80,16 @@ public class buscarImagen extends HttpServlet {
                                String nomf = rs.getString("nombre_fichero");
                                out.println("<tr> <td> "+idf+" </td><td>"+titulof+"</td><td>"+descripcionf+"</td><td>"+autorf+"</td><td>"+fechaf+"</td><td>"+fechaa+"</td><td>"+nomf+"</td>"); 
                                if (autorf.equals(autor)){
-                                   out.println("<td><form action=\"modificarImagen.jsp\"> <input type=\"submit\" value=\"Modificar Imagen\"> </form></td></tr>");
-                               }
+                                   out.println("<td><form action=\"modificarImagen.jsp\"> "
+                                                + "<input type=\"submit\" value=\"Modificar Imagen\"> "
+                                                + "<input type=\"hidden\" name=\"titulo\" value =\"" + titulof + "\"> "
+                                                + "<input type=\"hidden\" name=\"descripcion\" value =\"" + descripcionf + "\">"
+                                                + "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + palabra + "\">"
+                                                + "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + fechaf + "\">"
+                                                + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
+                                                + "</form></td>"
+                                                + "</tr>");
+                               }                               
                                else out.println("</tr>");
                             }
                         }
