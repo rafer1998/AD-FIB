@@ -6,6 +6,9 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +34,45 @@ public class modificarImagen extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        PrintWriter out = response.getWriter();
+        Connection connection = null; 
+        
+        String id = request.getParameter("id"); 
+        String titulo = request.getParameter("titulo");            
+        String descripcion = request.getParameter("descripcion");        
+        String palabras_clave = request.getParameter("palabras_clave");
+        String fecha = request.getParameter("fecha");
+        out.println("<h4>id: " + id + "</h4>");
+        out.println("<h4>titulo: " + titulo + "</h4>");
+        out.println("<h4>descripcion: " + descripcion + "</h4>");
+        out.println("<h4>palabras_clave: " + palabras_clave + "</h4>");
+        out.println("<h4>fecha: " + fecha + "</h4>");
+        
+        
+        try {
+            PreparedStatement statement;
+            String query;
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");        
+            
+            try{
+            query = "UPDATE IMAGEN "
+                    + "SET TITULO = ?, DESCRIPCION = ?, PALABRAS_CLAVE = ?, FECHA_CREACION = ? "
+                    + "WHERE id = ?";            
+            statement = connection.prepareStatement(query);
+            
+            statement.setString(1, titulo);
+            statement.setString(2, descripcion); 
+            statement.setString(3, palabras_clave);
+            statement.setString(4, fecha);
+            statement.setString(5, id);
+            
+            statement.executeUpdate();     
+            }
+            catch(Exception e){
+                response.sendRedirect("error.jsp");
+            }
+            out.println("<h4>Has modificado la imagen correctamente!</h4>");
+            
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -42,6 +83,9 @@ public class modificarImagen extends HttpServlet {
             out.println("<h1>Servlet modificarImagen at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
+        }
+        catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 

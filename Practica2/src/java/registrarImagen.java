@@ -95,11 +95,13 @@ public class registrarImagen extends HttpServlet {
                 statement.setString(6, fecha_creacion);
                 statement.setString(7, fecha_alta);
                 statement.setString(8, nombrefichero+extensionfichero);
+                
                 statement.executeUpdate();                
             }
             catch(Exception e){
                 response.sendRedirect("error.jsp");
-            }            out.println("<h4>Has subido la imagen correctamente!</h4>");
+            }            
+            out.println("<h4>Has subido la imagen correctamente!</h4>");
             
             OutputStream outS = null;
             outS = new FileOutputStream(new File(path + File.separator + nombrefichero + extensionfichero));

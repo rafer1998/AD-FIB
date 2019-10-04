@@ -63,6 +63,7 @@
                                         <input type="hidden" name="descripcion" value ="<%=rs.getString("DESCRIPCION")%>">
                                         <input type="hidden" name="palabras_clave" value ="<%=rs.getString("PALABRAS_CLAVE")%>">
                                         <input type="hidden" name="fecha_creacion" value ="<%=rs.getString("FECHA_CREACION")%>">
+                                        <input type="hidden" name="id" value ="<%=rs.getString("ID")%>">
                                         
                                         
                                 </form></td>
