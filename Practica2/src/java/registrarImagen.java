@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 /**
@@ -60,13 +60,11 @@ public class registrarImagen extends HttpServlet {
         String descripcion = request.getParameter("descripcion");        
         String palabras_clave = request.getParameter("palabras_clave");
         
-        String autor = "NULL";
-        Cookie[] cookies = request.getCookies();
-        if(cookies !=null){
-            for(Cookie cookie : cookies){
-                  if(cookie.getName().equals("autor")) autor = cookie.getValue();
-            }
-        }        
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        
+        
         String fecha_creacion = request.getParameter("fecha");  
         Date date = new Date();
         DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");

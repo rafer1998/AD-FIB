@@ -17,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -39,13 +40,11 @@ public class buscarImagen extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String palclavebusqueda = request.getParameter("campos_busqueda");
         String vpalclavebusqueda [] = palclavebusqueda.split(";");
-        String autor = "NULL";
-        Cookie[] cookies = request.getCookies();
-        if(cookies !=null){
-            for(Cookie cookie : cookies){
-                  if(cookie.getName().equals("autor")) autor = cookie.getValue();
-            }
-        }
+        
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        
         Connection connection = null; 
         try (PrintWriter out = response.getWriter()) {
             int num = -1;

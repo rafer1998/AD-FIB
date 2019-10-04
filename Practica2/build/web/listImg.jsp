@@ -5,7 +5,6 @@
 --%>
 
 <%@page import="java.sql.*"%>
-<%@page import="javax.servlet.*"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -16,13 +15,9 @@
     <body>
         <h1>Lista de Imagenes</h1>     
           <%
-            String autor = "NULL";
-            Cookie[] cookies = request.getCookies();
-            if(cookies !=null){
-                for(Cookie cookie : cookies){
-                      if(cookie.getName().equals("autor")) autor = cookie.getValue();
-                }
-            }
+            String autor = "NULL";   
+            HttpSession misession= (HttpSession) request.getSession();
+            autor = (String) misession.getAttribute("autor");
               
             Connection connection = null;
             try{
@@ -35,9 +30,6 @@
                 query = "select * from imagen";
                 statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery();
-                
-                //Sesiones
-                HttpSession misession= request.getSession(true);
                 
                 String autorImg = "null";
                 %>                
@@ -73,8 +65,6 @@
                           </tr>
                 <%  
                     }
-                        System.out.println("path fichero: " + misession.getAttribute("url"+1));
-                        System.out.println("path fichero: " + misession.getAttribute("url"+2));
                 %>
                 </table>
                 <%
