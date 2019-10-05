@@ -21,6 +21,11 @@
                 <input type="submit" value="Enviar">
                 <input type="reset" value="Borrar">
             </p>
-        </form>       
+        </form> 
+        
+        <form action="login.jsp">
+        <input type="submit" value="Volver a la pantalla principal">
+        </form>
+        
     </body>
 </html>
