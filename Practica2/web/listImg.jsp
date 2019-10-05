@@ -37,11 +37,9 @@
                 <%
                     while(rs.next()){                        
                            autorImg = rs.getString("AUTOR");
-                           System.out.println("autorImg: " + autorImg);
-                           System.out.println("usuario " + autor);
                 %>  
                           <tr>
-                            <td><%=rs.getString("NOMBRE_FICHERO")%></td>   
+                            <td><%=rs.getString("TITULO")%></td>   
                             <td><form action="mostrarImagen"> 
                                     <input type="submit" value="Previsualizar Imagen"> 
                                     <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">
