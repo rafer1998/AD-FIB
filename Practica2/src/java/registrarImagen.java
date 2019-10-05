@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 /**
@@ -60,13 +60,11 @@ public class registrarImagen extends HttpServlet {
         String descripcion = request.getParameter("descripcion");        
         String palabras_clave = request.getParameter("palabras_clave");
         
-        String autor = "NULL";
-        Cookie[] cookies = request.getCookies();
-        if(cookies !=null){
-            for(Cookie cookie : cookies){
-                  if(cookie.getName().equals("autor")) autor = cookie.getValue();
-            }
-        }        
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        
+        
         String fecha_creacion = request.getParameter("fecha");  
         Date date = new Date();
         DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
@@ -94,12 +92,14 @@ public class registrarImagen extends HttpServlet {
                 statement.setString(5, autor);
                 statement.setString(6, fecha_creacion);
                 statement.setString(7, fecha_alta);
-                statement.setString(8, nombrefichero);
+                statement.setString(8, nombrefichero+extensionfichero);
+                
                 statement.executeUpdate();                
             }
             catch(Exception e){
                 response.sendRedirect("error.jsp");
-            }            out.println("<h4>Has subido la imagen correctamente!</h4>");
+            }            
+            out.println("<h4>Has subido la imagen correctamente!</h4>");
             
             OutputStream outS = null;
             outS = new FileOutputStream(new File(path + File.separator + nombrefichero + extensionfichero));
@@ -113,16 +113,9 @@ public class registrarImagen extends HttpServlet {
                 outS.write(bytes, 0, read);
             }  
             
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet registrarImagen</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet registrarImagen at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
+            out.println("<input type=\"submit\" value=\"Volver al menu\">");
+            out.println("</form>");   
         }
          catch (Exception e) {
             System.err.println(e.getMessage());

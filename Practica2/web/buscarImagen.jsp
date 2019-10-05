@@ -12,11 +12,25 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <%
+        //Comprobacion usuario con sesion iniciada//
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        if(autor == null)
+               //Si el usuario no tiene sesion ->  redirect a login//
+               response.sendRedirect("login.jsp");
+        %>
+        
         <h1>Buscar Imagen</h1>
         <form action="buscarImagen">
-         Inserta los campos de busqueda<br>
-        <input type="text" name="campos_busqueda" value="">
-        <input type="submit" value="Enviar">
+            <h3>Inserta los campos de busqueda</h3>
+            <input type="text" name="campos_busqueda" value="">
+            <input type="submit" value="Enviar">
         </form>
+        <br>
+        <form action="menu.jsp" method="POST" >        	
+            <input type="submit" value="Menu">
+    	</form>
     </body>
 </html>
