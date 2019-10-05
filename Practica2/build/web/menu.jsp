@@ -12,6 +12,16 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <%
+        //Comprobacion usuario con sesion iniciada//
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        if(autor == null)
+               //Si el usuario no tiene sesion ->  redirect a login//
+               response.sendRedirect("login.jsp");
+        %>
+        
         <h1>Menu</h1>        
         <a href="registrarImagen.jsp">Registrar Imagen</a><br>  
         <a href="listImg.jsp">Listar Imagenes</a><br>

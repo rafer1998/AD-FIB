@@ -12,14 +12,27 @@
         <title>Modificar Imagen</title>
     </head>
     <body>
+        <%
+        //Comprobacion usuario con sesion iniciada//
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        if(autor == null)
+               //Si el usuario no tiene sesion ->  redirect a login//
+               response.sendRedirect("login.jsp");
+        %>
+        
         <h1>Modifica Imagen</h1>
+        
         <%    
+        //Obtencion de los parametros de la imagen
         String id = request.getParameter("id");
         String titulo = request.getParameter("titulo");
         String descripcion = request.getParameter("descripcion");
         String palabras_clave = request.getParameter("palabras_clave");
         String fecha_creacion = request.getParameter("fecha_creacion");   
         %>
+        
         <h1><%=titulo%></h1>
         <form action="modificarImagen" enctype="multipart/form-data">
                 <p>Titulo: <input type="text" name="titulo" size="40" value="<%=titulo%>" required></p>

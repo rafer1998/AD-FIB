@@ -13,12 +13,18 @@
         <title>listImg</title>
     </head>
     <body>
+        <%
+        //Comprobacion usuario con sesion iniciada//
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        if(autor == null)
+               //Si el usuario no tiene sesion ->  redirect a login//
+               response.sendRedirect("login.jsp");
+        %>        
+        
         <h1>Lista de Imagenes</h1>     
-          <%
-            String autor = "NULL";   
-            HttpSession misession= (HttpSession) request.getSession();
-            autor = (String) misession.getAttribute("autor");
-              
+          <%            
             Connection connection = null;
             try{
                 String query;
@@ -35,7 +41,8 @@
                 %>                
                 <table>                    
                 <%
-                    while(rs.next()){                        
+                    while(rs.next()){ 
+                           //Bucle para listar todas las imagenes que se encuentran en la base de datos
                            autorImg = rs.getString("AUTOR");
                 %>  
                           <tr>
@@ -46,6 +53,7 @@
                             </form></td>
                             <%
                             if(autorImg.equals(autor)){
+                            //Si la imagen pertenece al usuario actual -> puede modificar y borrar
                             %> 
                                 <td><form action="modificarImagen.jsp" method="POST">  
                                         <input type="submit" value="Modificar Imagen"> 
@@ -88,9 +96,6 @@
                     System.err.println(e.getMessage());
                 }
             }
-           
-
-         %>     
-        
+         %>  
     </body>
 </html>

@@ -15,7 +15,7 @@
         <h1><i>Crear Usuario</i></h1>
         
         <form action="register" method="POST">
-            <p>Uusuario: <input type="text" name="usuario" size="40"></p>
+            <p>Usuario: <input type="text" name="usuario" size="40"></p>
             <p>Password: <input type="text" name="password" size="40"></p>
             <p>
                 <input type="submit" value="Enviar">

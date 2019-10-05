@@ -6,10 +6,6 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.*" %>
-<%
-Random rand = new Random();
-int n = rand.nextInt(1000) + 1;
-%>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -17,6 +13,17 @@ int n = rand.nextInt(1000) + 1;
     	<title>registImatge</title>
 	</head>
 	<body>
+        <%
+        //Comprobacion usuario con sesion iniciada//
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        if(autor == null)
+               //Si el usuario no tiene sesion ->  redirect a login//
+               response.sendRedirect("login.jsp");
+        %>   
+            
+            
     	<h1><i>Registrar Imagen</i></h1>
    	 
         <form action="registrarImagen" method="POST" enctype="multipart/form-data">
