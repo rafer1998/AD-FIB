@@ -72,6 +72,7 @@ public class registrarImagen extends HttpServlet {
         Connection connection = null; 
         
         try {
+            out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
             PreparedStatement statement;
             String query;
             int id = -1;

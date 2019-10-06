@@ -38,7 +38,7 @@ public class login extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
+        out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
         String usuario = request.getParameter("usuario");
         out.println("<h1>Usuario: " + usuario + "</h1>");
             

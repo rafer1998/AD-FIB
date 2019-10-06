@@ -10,6 +10,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Modificar Imagen</title>
+        <style>
+            body {
+              background-color: lightblue;
+              text-align: center;
+            }
+            
+        </style>
     </head>
     <body>
         <%

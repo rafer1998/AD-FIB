@@ -37,18 +37,48 @@ public class buscarImagen extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        String palclavebusqueda = request.getParameter("campos_busqueda");
+        String palclavebusqueda = request.getParameter("palabras_clave");
+        String autorbus = request.getParameter("autor");
+        String desbus = request.getParameter("descripcion");
+        String titulobus = request.getParameter("titulo");
+        String fechabus = request.getParameter("fecha_creacion");
         String vpalclavebusqueda [] = palclavebusqueda.split(";");
         
         String autor = "NULL";         
+        int bool_autor = 0;
+        int bool_descrip = 0;
+        int bool_titulo = 0;
+        int bool_fecha = 0;
+        int bool_pal = 0;
         HttpSession misession= (HttpSession) request.getSession();
         autor = (String) misession.getAttribute("autor");
         
         Connection connection = null; 
         PrintWriter out = response.getWriter();
+        out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
         try{
             out.println("<h1> Imagenes encontradas </h1>");
+            if (autorbus != null && !autorbus.isEmpty()) {
+                bool_autor = 1;
+            }
+            //out.println("<h1>"+ bool_autor+" </h1>");
+            if (desbus != null && !desbus.isEmpty()) {
+                bool_descrip = 1;
+            }
+            //out.println("<h1>"+ bool_descrip+" </h1>");
+            if (titulobus != null && !titulobus.isEmpty()) {
+                bool_titulo = 1;
+            }
+            //out.println("<h1>"+ bool_titulo+" </h1>");
+            if (fechabus != null && !fechabus.isEmpty()) {
+                bool_fecha = 1;
+            }
             
+            //out.println("<h1>"+ bool_fecha+" </h1>");
+            if (palclavebusqueda != null && !palclavebusqueda.isEmpty()) {
+                bool_pal = 1;
+            }
+            //out.println("<h1>"+ bool_pal+" </h1>");
             int num = -1;
             PreparedStatement statement,statement2;
             String query, query2;
@@ -69,48 +99,65 @@ public class buscarImagen extends HttpServlet {
             if (num > 0){
                 out.println("<table style=\"width:100%\"> "
                         + "<tr>"
-                        + "<th>Id</th> <th>Titulo</th> <th>Descripcion</th> <th>Autor</th> <th>Fecha Creación</th> <th>Fecha_Alta</th> <th>Nombre Fichero</th> <th>Modificar Foto</th>"
+                        + "<th>Id</th> <th>Titulo</th> <th>Descripcion</th> <th>Autor</th> <th>Fecha Creación</th> <th>Fecha_Alta</th> <th>Nombre Fichero</th> <th>Modificar Foto</th> <th>Eliminar Foto</th>"
                         + "</tr> ");
                 while (rs.next()) {
                     String palabra = rs.getString("palabras_clave");
                     String[] parts = palabra.split(";");
                     int trobat = 0;
-                    for (int i = 0; i < parts.length && trobat == 0; ++i) {
-                        for (int j = 0; j < vpalclavebusqueda.length && trobat == 0; ++j) {
-                            if (parts[i].equals(vpalclavebusqueda[j])) {
-                               trobat = 1;
-                               String idf = rs.getString("id");
-                               String titulof = rs.getString("titulo");
-                               String descripcionf = rs.getString("descripcion");
-                               String autorf = rs.getString("autor");
-                               String fechaf = rs.getString("fecha_creacion");
-                               String fechaa = rs.getString("fecha_alta");
-                               String nomf = rs.getString("nombre_fichero");
-                               out.println("<tr> "
-                                       + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descripcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>"); 
-                               if (autorf.equals(autor)){
-                                   out.println("<td><form action=\"modificarImagen.jsp\"> "
-                                                + "<input type=\"submit\" value=\"Modificar Imagen\"> "
-                                                + "<input type=\"hidden\" name=\"titulo\" value =\"" + titulof + "\"> "
-                                                + "<input type=\"hidden\" name=\"descripcion\" value =\"" + descripcionf + "\">"
-                                                + "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + palabra + "\">"
-                                                + "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + fechaf + "\">"
-                                                + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
-                                                + "</form></td>"
-                                                + "</tr>");
-                                   out.println("<td><form action=\"eliminarImagen\" method=\"POST\"> "
-                                                + "<input type=\"submit\" value=\"Eliminar Imagen\"> "
-                                                + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
-                                                + "<input type=\"hidden\" name=\"nombre_fichero\" value =\"" + nomf + "\">"
-                                                + "</form></td>");
-                               }                               
-                               out.println("</tr></table>");
+                    int falla = 0;
+                    String idf = rs.getString("id");
+                    String titulof = rs.getString("titulo");
+                    String descripcionf = rs.getString("descripcion");
+                    String autorf = rs.getString("autor");
+                    String fechaf = rs.getString("fecha_creacion");
+                    String fechaa = rs.getString("fecha_alta");
+                    String nomf = rs.getString("nombre_fichero");
+                     if (bool_pal != 0) {
+                        for (int i = 0; i < parts.length && trobat == 0; ++i) {
+                            for (int j = 0; j < vpalclavebusqueda.length && trobat == 0; ++j) {
+                                if (parts[i].equals(vpalclavebusqueda[j])) {
+                                   trobat = 1;
+                                   falla = 0;
+                                }
+                         
                             }
                         }
+                     }
+                    if (bool_autor != 0) {
+                        if (!autorf.equals(autorbus)) falla = 1;
+                    }
+                    if (bool_titulo != 0) {
+                        if (!titulof.equals(titulobus)) falla = 1;
+                    }
+                    if (bool_descrip != 0) {
+                        if (!descripcionf.equals(desbus)) falla = 1;
+                    }
+                    if (falla == 0) {
+                        out.println("<tr> "
+                                           + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descripcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>"); 
+                                   if (autorf.equals(autor)){
+                                       out.println("<td><form action=\"modificarImagen.jsp\"> "
+                                                    + "<input type=\"submit\" value=\"Modificar Imagen\"> "
+                                                    + "<input type=\"hidden\" name=\"titulo\" value =\"" + titulof + "\"> "
+                                                    + "<input type=\"hidden\" name=\"descripcion\" value =\"" + descripcionf + "\">"
+                                                    + "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + palabra + "\">"
+                                                    + "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + fechaf + "\">"
+                                                    + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
+                                                    + "</form></td>"
+                                                    );
+                                       out.println("<td><form action=\"eliminarImagen\" method=\"POST\"> "
+                                                    + "<input type=\"submit\" value=\"Eliminar Imagen\"> "
+                                                    + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
+                                                    + "<input type=\"hidden\" name=\"nombre_fichero\" value =\"" + nomf + "\">"
+                                                    + "</form></td>");
+                                   }                               
+                                   out.println("</tr>");
                     }
                 }
                 
             } 
+            out.println("</table>");
             
             out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
             out.println("<input type=\"submit\" value=\"Volver al menu\">");

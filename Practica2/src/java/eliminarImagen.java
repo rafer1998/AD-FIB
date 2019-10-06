@@ -39,7 +39,7 @@ public class eliminarImagen extends HttpServlet {
         
         String id = request.getParameter("id"); 
         String nombre_fichero = request.getParameter("nombre_fichero");
-        
+        out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
         Connection connection = null; 
         try {            
             PreparedStatement statement;

@@ -10,6 +10,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+        <style>
+            body {
+              background-color: lightblue;
+              text-align: center;
+            }
+            
+        </style>
     </head>
     <body>
         <%
@@ -21,11 +28,21 @@
                //Si el usuario no tiene sesion ->  redirect a login//
                response.sendRedirect("login.jsp");
         %>
-        
         <h1>Buscar Imagen</h1>
         <form action="buscarImagen">
             <h3>Inserta los campos de busqueda</h3>
-            <input type="text" name="campos_busqueda" value="">
+            <h4>Palabras Clave</h4>
+            <input type="text" name="palabras_clave" value="">  
+            <h4>Autor</h4>
+            <input type="text" name="autor" value="">
+            <h4>Descripción</h4>
+            <input type="text" name="descripcion" value="">
+            <h4>Titulo</h4>
+            <input type="text" name="titulo" value="">
+            <h4>Fecha de Creación</h4>
+            <input type="text" name="fecha_creacion" value="">
+            <br>
+            <br>
             <input type="submit" value="Enviar">
         </form>
         <br>
