@@ -15,8 +15,7 @@
             body {
               background-color: lightblue;
               text-align: center;
-            }
-            
+            }            
         </style>
     </head>
     <body>
@@ -39,7 +38,8 @@
                 Class.forName("org.apache.derby.jdbc.ClientDriver");  
 
                 connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
-
+                
+                //Seleccion de todas las imagenes de la BD
                 query = "select * from imagen";
                 statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery();
@@ -49,7 +49,7 @@
                 <table>                    
                 <%
                     while(rs.next()){ 
-                           //Bucle para listar todas las imagenes que se encuentran en la base de datos
+                           //Bucle para listar todas las imagenes y generar TABLA
                            autorImg = rs.getString("AUTOR");
                 %>  
                           <tr>
@@ -85,6 +85,7 @@
                     }
                 %>
                 </table>
+                
                 <form action="menu.jsp" method="POST" >        	
                     <input type="submit" value="Menu">
                 </form>

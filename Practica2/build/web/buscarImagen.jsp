@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>buscarImagen</title>
         <style>
             body {
               background-color: lightblue;
@@ -31,18 +31,24 @@
         <h1>Buscar Imagen</h1>
         <form action="buscarImagen">
             <h3>Inserta los campos de busqueda</h3>
+            
             <h4>Palabras Clave</h4>
-            <input type="text" name="palabras_clave" value="">  
-            <h4>Autor</h4>
+            <input type="text" name="palabras_clave" value=""> 
+            
+            <h4>Autor</h4>            
             <input type="text" name="autor" value="">
+            
             <h4>Descripción</h4>
             <input type="text" name="descripcion" value="">
+            
             <h4>Titulo</h4>
             <input type="text" name="titulo" value="">
+            
             <h4>Fecha de Creación</h4>
-            <input type="text" name="fecha_creacion" value="">
-            <br>
-            <br>
+            <input type="date" name="fecha_creacion" value="2010-12-16; ">
+            
+            <br><br>
+            
             <input type="submit" value="Enviar">
         </form>
         <br>

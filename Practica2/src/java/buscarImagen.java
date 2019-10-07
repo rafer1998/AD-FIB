@@ -105,7 +105,7 @@ public class buscarImagen extends HttpServlet {
                 while (rs.next()) {
                     //Bucle con todas las imagenes
                     int trobat = 0;
-                    int falla = 0;
+                    int falla = -1; //inicializamos a -1 para saber si no estan todos los campos vacios
                     
                     //Obtencion parametros de la imagen -> BD
                     String palabra = rs.getString("palabras_clave");
@@ -125,21 +125,32 @@ public class buscarImagen extends HttpServlet {
                                 if (parts[i].equals(vpalclavebusqueda[j])) {
                                    trobat = 1;
                                    falla = 0;
-                                }                         
+                                }   
+                                if((i == parts.length - 1) && (j == vpalclavebusqueda.length - 1) && trobat != 1){
+                                    falla = 1;
+                                }
                             }
                         }
                      }
-                    if (bool_autor != 0) {
+                    if (falla  != 1 && bool_autor != 0) {
                         //Comprobacion autor
-                        if (!autorf.equals(autorbus)) falla = 1;
+                        if (!autorf.equals(autorbus)) falla = 1; //autor no es igual -> busqueda erronea
+                        else falla = 0; //autor es igual -> busqueda correcta por ahora
                     }
-                    if (bool_titulo != 0) {
+                    if (falla != 1 && bool_titulo != 0) {
                         //Comprobacion titulo
                         if (!titulof.equals(titulobus)) falla = 1;
+                        else falla = 0;
                     }
-                    if (bool_descrip != 0) {
+                    if (falla != 1 && bool_descrip != 0) {
                         //Comprobacion descripcion
                         if (!descripcionf.equals(desbus)) falla = 1;
+                        else falla = 0;
+                    }
+                    if (falla != 1 && bool_fecha != 0) {
+                        //Comprobacion fecha
+                        if (!fechaf.equals(fechabus)) falla = 1;
+                        else falla = 0;
                     }
                     if (falla == 0) {
                         //Si coincide todos los campos ->
@@ -169,8 +180,8 @@ public class buscarImagen extends HttpServlet {
             } 
             out.println("</table>");
             
-            out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
-            out.println("<input type=\"submit\" value=\"Volver al menu\">");
+            out.println("<form action=\"buscarImagen.jsp\" method=\"POST\">  ");
+            out.println("<input type=\"submit\" value=\"Volver a la busqueda\">");
             out.println("</form>");   
         }
         catch (Exception e) {

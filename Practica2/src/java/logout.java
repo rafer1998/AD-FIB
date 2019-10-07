@@ -40,7 +40,7 @@ public class logout extends HttpServlet {
             HttpSession misession= (HttpSession) request.getSession();
             misession.invalidate();
             
-            out.println("<h2>Has cerrado sesion</h2>");
+            out.println("<h2>Has cerrado sesión</h2>");
             
             out.println("<form action=\"login.jsp\">");
             out.println("<input type=\"submit\" value=\"Volver a la pantalla principal\">");

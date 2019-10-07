@@ -14,8 +14,7 @@
             body {
               background-color: lightblue;
               text-align: center;
-            }
-            
+            }            
         </style>
     </head>
     <body>
@@ -32,7 +31,7 @@
         <h1>Modifica Imagen</h1>
         
         <%    
-        //Obtencion de los parametros de la imagen
+        //Obtencion de los parametros de la imagen -> para poder enviarlo al .java
         String id = request.getParameter("id");
         String titulo = request.getParameter("titulo");
         String descripcion = request.getParameter("descripcion");
@@ -53,6 +52,10 @@
             	<input type="submit" value="Enviar">
             	<input type="reset" value="Borrar">
         	</p>
+    	</form>
+                
+        <form action="menu.jsp" method="POST" >        	
+        <input type="submit" value="Menu">
     	</form>
     </body>
 </html>
