@@ -22,8 +22,8 @@
         <div class="center">
             <h1><i>Iniciar Sesión</i></h1>
             <form action="login" method="POST">
-                <p>Usuario: <input type="text" name="usuario" size="40"></p>
-                <p>Password: <input type="text" name="password" size="40"></p>
+                <p>Usuario: <input type="text" name="usuario" size="40" required></p>
+                <p>Password: <input type="password" name="password" size="40" required></p>
                 <p>
                     <input type="submit" value="Enviar">
                     <input type="reset" value="Borrar">

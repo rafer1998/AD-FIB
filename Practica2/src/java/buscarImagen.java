@@ -37,6 +37,7 @@ public class buscarImagen extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
+        //Parametros
         String palclavebusqueda = request.getParameter("palabras_clave");
         String autorbus = request.getParameter("autor");
         String desbus = request.getParameter("descripcion");
@@ -50,42 +51,41 @@ public class buscarImagen extends HttpServlet {
         int bool_titulo = 0;
         int bool_fecha = 0;
         int bool_pal = 0;
+        
+        //Sesion
         HttpSession misession= (HttpSession) request.getSession();
         autor = (String) misession.getAttribute("autor");
         
         Connection connection = null; 
         PrintWriter out = response.getWriter();
+        
+        //CSS
         out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
+        
         try{
             out.println("<h1> Imagenes encontradas </h1>");
-            if (autorbus != null && !autorbus.isEmpty()) {
-                bool_autor = 1;
-            }
-            //out.println("<h1>"+ bool_autor+" </h1>");
-            if (desbus != null && !desbus.isEmpty()) {
-                bool_descrip = 1;
-            }
-            //out.println("<h1>"+ bool_descrip+" </h1>");
-            if (titulobus != null && !titulobus.isEmpty()) {
-                bool_titulo = 1;
-            }
-            //out.println("<h1>"+ bool_titulo+" </h1>");
-            if (fechabus != null && !fechabus.isEmpty()) {
-                bool_fecha = 1;
-            }
             
-            //out.println("<h1>"+ bool_fecha+" </h1>");
-            if (palclavebusqueda != null && !palclavebusqueda.isEmpty()) {
+            //Comprobacion -> campo de datos vacio [0] o no [1]
+            if (autorbus != null && !autorbus.isEmpty())
+                bool_autor = 1;
+            if (desbus != null && !desbus.isEmpty())
+                bool_descrip = 1;
+            if (titulobus != null && !titulobus.isEmpty())
+                bool_titulo = 1;
+            if (fechabus != null && !fechabus.isEmpty())
+                bool_fecha = 1;
+            if (palclavebusqueda != null && !palclavebusqueda.isEmpty())
                 bool_pal = 1;
-            }
-            //out.println("<h1>"+ bool_pal+" </h1>");
+            
             int num = -1;
             PreparedStatement statement,statement2;
             String query, query2;
             
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
             
-            query = "select * from imagen";
+            //Seleccion de todas las imagenes
+            query = "select * from imagen"; 
+            //Cuenta todas las imagenes de la BD
             query2 = "select count(id) from imagen";
             
             statement = connection.prepareStatement(query);
@@ -94,6 +94,7 @@ public class buscarImagen extends HttpServlet {
             ResultSet rs2 = statement2.executeQuery(); 
             
             if (rs2.next()) {
+                //Numero de imagenes en la BD
                 num = rs2.getInt(1);
             }
             if (num > 0){
@@ -102,10 +103,13 @@ public class buscarImagen extends HttpServlet {
                         + "<th>Id</th> <th>Titulo</th> <th>Descripcion</th> <th>Autor</th> <th>Fecha Creación</th> <th>Fecha_Alta</th> <th>Nombre Fichero</th> <th>Modificar Foto</th> <th>Eliminar Foto</th>"
                         + "</tr> ");
                 while (rs.next()) {
-                    String palabra = rs.getString("palabras_clave");
-                    String[] parts = palabra.split(";");
+                    //Bucle con todas las imagenes
                     int trobat = 0;
                     int falla = 0;
+                    
+                    //Obtencion parametros de la imagen -> BD
+                    String palabra = rs.getString("palabras_clave");
+                    String[] parts = palabra.split(";");  
                     String idf = rs.getString("id");
                     String titulof = rs.getString("titulo");
                     String descripcionf = rs.getString("descripcion");
@@ -113,30 +117,36 @@ public class buscarImagen extends HttpServlet {
                     String fechaf = rs.getString("fecha_creacion");
                     String fechaa = rs.getString("fecha_alta");
                     String nomf = rs.getString("nombre_fichero");
+                    
                      if (bool_pal != 0) {
+                        //Comprobacion palabras clave
                         for (int i = 0; i < parts.length && trobat == 0; ++i) {
                             for (int j = 0; j < vpalclavebusqueda.length && trobat == 0; ++j) {
                                 if (parts[i].equals(vpalclavebusqueda[j])) {
                                    trobat = 1;
                                    falla = 0;
-                                }
-                         
+                                }                         
                             }
                         }
                      }
                     if (bool_autor != 0) {
+                        //Comprobacion autor
                         if (!autorf.equals(autorbus)) falla = 1;
                     }
                     if (bool_titulo != 0) {
+                        //Comprobacion titulo
                         if (!titulof.equals(titulobus)) falla = 1;
                     }
                     if (bool_descrip != 0) {
+                        //Comprobacion descripcion
                         if (!descripcionf.equals(desbus)) falla = 1;
                     }
                     if (falla == 0) {
+                        //Si coincide todos los campos ->
                         out.println("<tr> "
                                            + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descripcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>"); 
                                    if (autorf.equals(autor)){
+                                       //El usuario es el mismo que el autor de la imagen
                                        out.println("<td><form action=\"modificarImagen.jsp\"> "
                                                     + "<input type=\"submit\" value=\"Modificar Imagen\"> "
                                                     + "<input type=\"hidden\" name=\"titulo\" value =\"" + titulof + "\"> "

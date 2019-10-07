@@ -35,6 +35,8 @@ public class logout extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {
             out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
+            
+            //Cerrar la sesion
             HttpSession misession= (HttpSession) request.getSession();
             misession.invalidate();
             

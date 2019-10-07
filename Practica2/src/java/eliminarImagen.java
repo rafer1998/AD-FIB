@@ -37,9 +37,13 @@ public class eliminarImagen extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();  
         
+        //CSS
+        out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
+        
+        //Parametros para eliminar imagen
         String id = request.getParameter("id"); 
         String nombre_fichero = request.getParameter("nombre_fichero");
-        out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
+        
         Connection connection = null; 
         try {            
             PreparedStatement statement;
@@ -60,13 +64,11 @@ public class eliminarImagen extends HttpServlet {
                 if (f.delete())
                     System.out.println("El fichero ha sido borrado satisfactoriamente");
                 else
-                    System.out.println("El fichero no puede ser borrado");
-                
+                    System.out.println("El fichero no puede ser borrado");                
             }
             catch(Exception e){
                 response.sendRedirect("error.jsp");
             }   
-
             out.println("<h4>Has eliminado la imagen correctamente!</h4>");
             
             out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
