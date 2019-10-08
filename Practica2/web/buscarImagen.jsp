@@ -15,7 +15,6 @@
               background-color: lightblue;
               text-align: center;
             }
-            
         </style>
     </head>
     <body>
