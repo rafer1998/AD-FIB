@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,17 +36,19 @@ public class register extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        
+        //CSS -> 
         out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
-        String usuario = request.getParameter("usuario");
-        out.println("<h1>Usuario: " + usuario + "</h1>");
-            
+        
+        
+        //Obtencion de parametros que ha obtenido el usuario
+        String usuario = request.getParameter("usuario");            
         String password = request.getParameter("password");
-        out.println("<h1>Password: " + password + "</h1>");
+        String conf_password = request.getParameter("conf_password");
         
         Connection connection = null; 
-        try {
-             // create a database connection
-            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");        
+        try {            
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");       
             
             PreparedStatement statement;
             String query;
@@ -55,41 +56,38 @@ public class register extends HttpServlet {
             query = "select * from usuarios";
             statement = connection.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
+
             boolean exist = false;
             while (!exist && rs.next()) {
-                // read the result set
-                if(rs.getString("id_usuario").equals(usuario)){
-                    if(rs.getString("password").equals(password)){
-                        //el usuario y la contraseña coinciden -> usuario existe en la BD
-                        exist = true;
-                    }                
+                //Bucle que comprueba si el nombre de usuario ya se encuentra utilizado
+                if(rs.getString("id_usuario").equals(usuario)){                    
+                        exist = true;                               
                 }  
-                rs.next(); //comprobar!!!!!!!
+                rs.next();
             }
-            if(exist)
-                 out.println("<h4>Error</h4>");
-            else{
-                query = "insert into usuarios values(?,?)";
-                statement = connection.prepareStatement(query);
-                statement.setString(1, usuario);
-                statement.setString(2, password);                                    
-                statement.executeUpdate();
-                out.println("<h4>Te has registrado correctamente!</h4>");
+            if(exist){
+                //Error 1: usuario ya existe
+                out.println("<br><h2>Error</h2>");
                 out.println("<form action=\"menu.jsp\" method=\"POST\"> <p> <input type=\"submit\" value=\"Volver al menu\"></p></form>");
-            }            
-            
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet login</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet login at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-            
-            
+            }
+            else{     
+                if(!password.equals(conf_password)){
+                    //Error 2: contraseña mal introducida 
+                    out.println("<br><h2>Error</h2>");
+                    out.println("<form action=\"menu.jsp\" method=\"POST\"> <p> <input type=\"submit\" value=\"Volver al menu\"></p></form>");
+                }
+                else{
+                    //Correcto -> insertar usuario
+                    query = "insert into usuarios values(?,?)";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, usuario);
+                    statement.setString(2, password);                                    
+                    statement.executeUpdate();
+                    
+                    out.println("<h4>Te has registrado correctamente!</h4>");
+                    out.println("<form action=\"menu.jsp\" method=\"POST\"> <p> <input type=\"submit\" value=\"Volver al menu\"></p></form>");
+                }
+            }    
         }
          catch (Exception e) {
             System.err.println(e.getMessage());

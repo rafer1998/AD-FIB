@@ -48,6 +48,10 @@ public class mostrarImagen extends HttpServlet {
             String compl = path.concat(nombreFichero);              
             out.println("<img src=" + compl +">"); 
             
+            out.println("<form action=\"listImg.jsp\" method=\"POST\">  ");
+            out.println("<input type=\"submit\" value=\"Volver a la lista\">");
+            out.println("</form>");
+            
             out.println("</body>");
             out.println("</html>");
         }

@@ -35,10 +35,12 @@ public class logout extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {
             out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
+            
+            //Cerrar la sesion
             HttpSession misession= (HttpSession) request.getSession();
             misession.invalidate();
             
-            out.println("<h2>Has cerrado sesion</h2>");
+            out.println("<h2>Has cerrado sesión</h2>");
             
             out.println("<form action=\"login.jsp\">");
             out.println("<input type=\"submit\" value=\"Volver a la pantalla principal\">");
