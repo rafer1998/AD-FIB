@@ -1,14 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.me.imagenes;
 
-/**
- *
- * @author ruben
- */
 public class Image {
+    public int id;
+    public String titulo;
+    public String autor;
+    public String descripcion;    
+    public String creaDate;
+    public String keywords;     
     
+    public Image(){    
+    }
+    
+    public Image(int id, String Titulo, String Autor, String Descripcion, String creaDate, String keywords){
+        this.id = id;
+        this.titulo = Titulo;
+        this.autor = Autor;
+        this.descripcion = Descripcion;
+        this.creaDate = creaDate;
+        this.keywords = keywords;
+    }
 }
