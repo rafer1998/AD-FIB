@@ -86,23 +86,23 @@ public class servicioImagenes {
                 query = "insert into imagen values(?,?,?,?,?,?,?,?)";
                 statement = connection.prepareStatement(query);
                 statement.setInt(1, id);
-                statement.setString(2, Image.titulo); 
-                statement.setString(3, Image.descripcion);
-                statement.setString(4, Image.keywords);
-                statement.setString(5, Image.autor);
-                statement.setString(6, Image.creaDate);
+                statement.setString(2, Image.getTitulo()); 
+                statement.setString(3, Image.getDescripcion());
+                statement.setString(4, Image.getKeywords());
+                statement.setString(5, Image.getAutor());
+                statement.setString(6, Image.getCreaDate());
                 statement.setString(7, altaDate);
-                statement.setString(8, Image.titulo);
+                statement.setString(8, Image.getTitulo());
                 
                 statement.executeUpdate();                
             }
             catch(Exception e){
+                System.err.println(e.getMessage());
                 return 0;
             }
         } 
         catch (Exception e) {
             System.err.println(e.getMessage());
-            return 0;
         } 
         finally {
             try {
@@ -141,8 +141,50 @@ public class servicioImagenes {
      */
     @WebMethod(operationName = "SearchbyId")
     public Image SearchbyId(@WebParam(name = "id") int id) {
-        //TODO write your implementation code here:
-        return null;
+       Connection connection = null;
+       Image resultado = new Image();
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            try{
+                query = "select *"
+                      + "from imagen"
+                      + "where id ?";
+                
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, id);  
+                ResultSet rs = statement.executeQuery(); 
+                
+                if(rs.next()){
+                    //Ha encontrado una imagen con ID = id                    
+                    resultado.setID(id);
+                    resultado.setAutor(rs.getString("autor"));
+                    resultado.setDescripcion(rs.getString("descripcion"));
+                } 
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultado;
     }
 
     /**
