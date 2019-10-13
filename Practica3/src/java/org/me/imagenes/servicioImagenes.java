@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
@@ -24,36 +25,6 @@ import javax.jws.WebParam;
  */
 @WebService(serviceName = "servicioImagenes")
 public class servicioImagenes {
-
-    /*
-    //Esta clase solo la he generado para poder copiar el codigo de conectar a la BD facilmente
-    public void conectar(){   
-        Connection connection = null;
-        try {
-            
-            PreparedStatement statement;
-            String query;
-            // load the sqlite-JDBC driver using the current class loader
-            Class.forName("org.sqlite.JDBC");
-
-            // create a database connection
-            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");               
-        } 
-        catch (Exception e) {
-            System.err.println(e.getMessage());
-        } 
-        finally {
-            try {
-                if (connection != null)
-                    connection.close();               
-            } 
-            catch (Exception e) {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
-        }
-    }
-    */
     /**
      * Web service operation
      */
@@ -85,6 +56,7 @@ public class servicioImagenes {
             try{
                 query = "insert into imagen values(?,?,?,?,?,?,?,?)";
                 statement = connection.prepareStatement(query);
+                
                 statement.setInt(1, id);
                 statement.setString(2, Image.getTitulo()); 
                 statement.setString(3, Image.getDescripcion());
@@ -122,9 +94,49 @@ public class servicioImagenes {
      * Web service operation
      */
     @WebMethod(operationName = "ModifyImage")
-    public int ModifyImage(@WebParam(name = "image") String image) {
-        //TODO write your implementation code here:
-        return 0;
+    public int ModifyImage(@WebParam(name = "Image") Image Image) {
+        Connection connection = null;
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");  
+            
+            try{
+                query = "UPDATE IMAGEN "
+                    + "SET TITULO = ?, DESCRIPCION = ?, PALABRAS_CLAVE = ?, FECHA_CREACION = ? "
+                    + "WHERE id = ?";   
+                statement = connection.prepareStatement(query);
+                
+                statement.setString(1, Image.getTitulo());
+                statement.setString(2, Image.getDescripcion()); 
+                statement.setString(3, Image.getKeywords());
+                statement.setString(4, Image.getCreaDate());
+                statement.setInt(5, Image.getID());
+            
+                statement.executeUpdate();                 
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+                return 0;
+            }
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+                return 0;
+            }
+        }
+        return 1;
     }
 
     /**
@@ -132,8 +144,56 @@ public class servicioImagenes {
      */
     @WebMethod(operationName = "ListImages")
     public List ListImages() {
-        //TODO write your implementation code here:
-        return null;
+        Connection connection = null;        
+        ArrayList<Image> resultado = new ArrayList<Image>();
+        
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            try{
+                query = "select *"
+                      + "from imagen";
+                
+                statement = connection.prepareStatement(query); 
+                ResultSet rs = statement.executeQuery(); 
+                
+                while(rs.next()){
+                    //Conjunto de imagenes que hay en la BD
+                    Image res = new Image();
+                    
+                    res.setID(rs.getInt("id"));
+                    res.setTitulo(rs.getString("titulo"));
+                    res.setAutor(rs.getString("autor"));
+                    res.setDescripcion(rs.getString("descripcion"));
+                    res.setCreaDate(rs.getString("fecha_creacion"));
+                    res.setKeywords(rs.getString("palabras_clave"));
+                    
+                    resultado.add(res);
+                }
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultado;
     }
 
     /**
@@ -163,7 +223,10 @@ public class servicioImagenes {
                     //Ha encontrado una imagen con ID = id                    
                     resultado.setID(id);
                     resultado.setAutor(rs.getString("autor"));
+                    resultado.setTitulo(rs.getString("titulo"));
                     resultado.setDescripcion(rs.getString("descripcion"));
+                    resultado.setCreaDate(rs.getString("fecha_creacion"));
+                    resultado.setKeywords(rs.getString("palabras_clave"));
                 } 
             }
             catch(Exception e){
@@ -192,8 +255,58 @@ public class servicioImagenes {
      */
     @WebMethod(operationName = "SearchbyTitle")
     public List SearchbyTitle(@WebParam(name = "title") String title) {
-        //TODO write your implementation code here:
-        return null;
+        Connection connection = null;        
+        ArrayList<Image> resultado = new ArrayList<Image>();
+        
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            try{
+                query = "select *"
+                      + "from imagen"
+                      + "where titulo ?";
+                
+                statement = connection.prepareStatement(query);
+                statement.setString(1, title);  
+                ResultSet rs = statement.executeQuery(); 
+                
+                while(rs.next()){
+                    //Conjunto de imagenes que cumplen la condicion
+                    Image res = new Image();
+                    
+                    res.setID(rs.getInt("id"));
+                    res.setTitulo(title);
+                    res.setAutor(rs.getString("autor"));
+                    res.setDescripcion(rs.getString("descripcion"));
+                    res.setCreaDate(rs.getString("fecha_creacion"));
+                    res.setKeywords(rs.getString("palabras_clave"));
+                    
+                    resultado.add(res);
+                }
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultado;
     }
 
     /**
@@ -201,8 +314,58 @@ public class servicioImagenes {
      */
     @WebMethod(operationName = "SearchbyCreatDate")
     public List SearchbyCreatDate(@WebParam(name = "creaDate") String creaDate) {
-        //TODO write your implementation code here:
-        return null;
+        Connection connection = null;        
+        ArrayList<Image> resultado = new ArrayList<Image>();
+        
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            try{
+                query = "select *"
+                      + "from imagen"
+                      + "where fecha_creacion ?";
+                
+                statement = connection.prepareStatement(query);
+                statement.setString(1, creaDate);  
+                ResultSet rs = statement.executeQuery(); 
+                
+                while(rs.next()){
+                    //Conjunto de imagenes que cumplen la condicion
+                    Image res = new Image();
+                    
+                    res.setID(rs.getInt("id"));
+                    res.setTitulo(rs.getString("titulo"));
+                    res.setAutor(rs.getString("autor"));
+                    res.setDescripcion(rs.getString("descripcion"));
+                    res.setCreaDate(creaDate);
+                    res.setKeywords(rs.getString("palabras_clave"));
+                    
+                    resultado.add(res);
+                }
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultado;
     }
 
     /**
@@ -210,8 +373,58 @@ public class servicioImagenes {
      */
     @WebMethod(operationName = "SearchbyAuthor")
     public List SearchbyAuthor(@WebParam(name = "autor") String autor) {
-        //TODO write your implementation code here:
-        return null;
+        Connection connection = null;        
+        ArrayList<Image> resultado = new ArrayList<Image>();
+        
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            try{
+                query = "select *"
+                      + "from imagen"
+                      + "where titulo ?";
+                
+                statement = connection.prepareStatement(query);
+                statement.setString(1, autor);  
+                ResultSet rs = statement.executeQuery(); 
+                
+                while(rs.next()){
+                    //Conjunto de imagenes que cumplen la condicion
+                    Image res = new Image();
+                    
+                    res.setID(rs.getInt("id"));
+                    res.setTitulo(rs.getString("titulo"));
+                    res.setAutor(autor);
+                    res.setDescripcion(rs.getString("descripcion"));
+                    res.setCreaDate(rs.getString("fecha_creacion"));
+                    res.setKeywords(rs.getString("palabras_clave"));
+                    
+                    resultado.add(res);
+                }
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultado;
     }
 
     /**
