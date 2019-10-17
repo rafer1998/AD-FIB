@@ -143,7 +143,7 @@ public class servicioImagenes {
      * Web service operation
      */
     @WebMethod(operationName = "ListImages")
-    public List ListImages() {
+    public List<Image> ListImages() {
         Connection connection = null;        
         ArrayList<Image> resultado = new ArrayList<Image>();
         
@@ -211,15 +211,16 @@ public class servicioImagenes {
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
             
             try{
-                query = "select *"
-                      + "from imagen"
-                      + "where id ?";
+                query = "select * "
+                      + "from imagen "
+                      + "where id = ?";
                 
                 statement = connection.prepareStatement(query);
                 statement.setInt(1, id);  
                 ResultSet rs = statement.executeQuery(); 
-                
+                System.out.println("Error1");
                 if(rs.next()){
+                    System.out.println("Error2");
                     //Ha encontrado una imagen con ID = id                    
                     resultado.setID(id);
                     resultado.setAutor(rs.getString("autor"));
@@ -254,7 +255,7 @@ public class servicioImagenes {
      * Web service operation
      */
     @WebMethod(operationName = "SearchbyTitle")
-    public List SearchbyTitle(@WebParam(name = "title") String title) {
+    public List<Image> SearchbyTitle(@WebParam(name = "title") String title) {
         Connection connection = null;        
         ArrayList<Image> resultado = new ArrayList<Image>();
         
@@ -266,9 +267,9 @@ public class servicioImagenes {
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
             
             try{
-                query = "select *"
-                      + "from imagen"
-                      + "where titulo ?";
+                query = "select * "
+                      + "from imagen "
+                      + "where titulo = ? ";
                 
                 statement = connection.prepareStatement(query);
                 statement.setString(1, title);  
@@ -313,7 +314,7 @@ public class servicioImagenes {
      * Web service operation
      */
     @WebMethod(operationName = "SearchbyCreatDate")
-    public List SearchbyCreatDate(@WebParam(name = "creaDate") String creaDate) {
+    public List<Image> SearchbyCreatDate(@WebParam(name = "creaDate") String creaDate) {
         Connection connection = null;        
         ArrayList<Image> resultado = new ArrayList<Image>();
         
@@ -325,9 +326,9 @@ public class servicioImagenes {
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
             
             try{
-                query = "select *"
-                      + "from imagen"
-                      + "where fecha_creacion ?";
+                query = "select * "
+                      + "from imagen "
+                      + "where fecha_creacion = ? ";
                 
                 statement = connection.prepareStatement(query);
                 statement.setString(1, creaDate);  
@@ -372,7 +373,7 @@ public class servicioImagenes {
      * Web service operation
      */
     @WebMethod(operationName = "SearchbyAuthor")
-    public List SearchbyAuthor(@WebParam(name = "autor") String autor) {
+    public List<Image> SearchbyAuthor(@WebParam(name = "autor") String autor) {
         Connection connection = null;        
         ArrayList<Image> resultado = new ArrayList<Image>();
         
@@ -384,9 +385,9 @@ public class servicioImagenes {
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
             
             try{
-                query = "select *"
-                      + "from imagen"
-                      + "where titulo ?";
+                query = "select * "
+                      + "from imagen "
+                      + "where autor = ? ";
                 
                 statement = connection.prepareStatement(query);
                 statement.setString(1, autor);  
@@ -431,8 +432,59 @@ public class servicioImagenes {
      * Web service operation
      */
     @WebMethod(operationName = "SearchbyKeywords")
-    public String SearchbyKeywords(@WebParam(name = "keywords") String keywords) {
-        //TODO write your implementation code here:
-        return null;
+    public List<Image> SearchbyKeywords(@WebParam(name = "keywords") String keywords) {
+        Connection connection = null;        
+        ArrayList<Image> resultado = new ArrayList<Image>();
+        
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            try{
+                query = "select * "
+                      + "from imagen "
+                      + "where palabras_clave = ? ";
+                
+                statement = connection.prepareStatement(query);
+                String palabras_clave = '%' + keywords + '%';
+                statement.setString(1, palabras_clave);  
+                ResultSet rs = statement.executeQuery(); 
+                
+                while(rs.next()){
+                    //Conjunto de imagenes que cumplen la condicion
+                    Image res = new Image();
+                    
+                    res.setID(rs.getInt("id"));
+                    res.setTitulo(rs.getString("titulo"));
+                    res.setAutor(rs.getString(("autor")));
+                    res.setDescripcion(rs.getString("descripcion"));
+                    res.setCreaDate(rs.getString("fecha_creacion"));
+                    res.setKeywords(rs.getString("palabras_clave"));
+                    
+                    resultado.add(res);
+                }
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultado;
     }
 }
