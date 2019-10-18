@@ -24,6 +24,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _DeleteImage_QNAME = new QName("http://imagenes.me.org/", "DeleteImage");
+    private final static QName _DeleteImageResponse_QNAME = new QName("http://imagenes.me.org/", "DeleteImageResponse");
     private final static QName _ListImages_QNAME = new QName("http://imagenes.me.org/", "ListImages");
     private final static QName _ListImagesResponse_QNAME = new QName("http://imagenes.me.org/", "ListImagesResponse");
     private final static QName _ModifyImage_QNAME = new QName("http://imagenes.me.org/", "ModifyImage");
@@ -46,6 +48,22 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link DeleteImage }
+     * 
+     */
+    public DeleteImage createDeleteImage() {
+        return new DeleteImage();
+    }
+
+    /**
+     * Create an instance of {@link DeleteImageResponse }
+     * 
+     */
+    public DeleteImageResponse createDeleteImageResponse() {
+        return new DeleteImageResponse();
     }
 
     /**
@@ -182,6 +200,24 @@ public class ObjectFactory {
      */
     public Image createImage() {
         return new Image();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteImage }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "DeleteImage")
+    public JAXBElement<DeleteImage> createDeleteImage(DeleteImage value) {
+        return new JAXBElement<DeleteImage>(_DeleteImage_QNAME, DeleteImage.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteImageResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "DeleteImageResponse")
+    public JAXBElement<DeleteImageResponse> createDeleteImageResponse(DeleteImageResponse value) {
+        return new JAXBElement<DeleteImageResponse>(_DeleteImageResponse_QNAME, DeleteImageResponse.class, null, value);
     }
 
     /**
