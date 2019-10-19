@@ -32,6 +32,8 @@ public class ObjectFactory {
     private final static QName _ModifyImageResponse_QNAME = new QName("http://imagenes.me.org/", "ModifyImageResponse");
     private final static QName _RegisterImage_QNAME = new QName("http://imagenes.me.org/", "RegisterImage");
     private final static QName _RegisterImageResponse_QNAME = new QName("http://imagenes.me.org/", "RegisterImageResponse");
+    private final static QName _SearchComb_QNAME = new QName("http://imagenes.me.org/", "SearchComb");
+    private final static QName _SearchCombResponse_QNAME = new QName("http://imagenes.me.org/", "SearchCombResponse");
     private final static QName _SearchbyAuthor_QNAME = new QName("http://imagenes.me.org/", "SearchbyAuthor");
     private final static QName _SearchbyAuthorResponse_QNAME = new QName("http://imagenes.me.org/", "SearchbyAuthorResponse");
     private final static QName _SearchbyCreatDate_QNAME = new QName("http://imagenes.me.org/", "SearchbyCreatDate");
@@ -112,6 +114,22 @@ public class ObjectFactory {
      */
     public RegisterImageResponse createRegisterImageResponse() {
         return new RegisterImageResponse();
+    }
+
+    /**
+     * Create an instance of {@link SearchComb }
+     * 
+     */
+    public SearchComb createSearchComb() {
+        return new SearchComb();
+    }
+
+    /**
+     * Create an instance of {@link SearchCombResponse }
+     * 
+     */
+    public SearchCombResponse createSearchCombResponse() {
+        return new SearchCombResponse();
     }
 
     /**
@@ -272,6 +290,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "RegisterImageResponse")
     public JAXBElement<RegisterImageResponse> createRegisterImageResponse(RegisterImageResponse value) {
         return new JAXBElement<RegisterImageResponse>(_RegisterImageResponse_QNAME, RegisterImageResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SearchComb }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "SearchComb")
+    public JAXBElement<SearchComb> createSearchComb(SearchComb value) {
+        return new JAXBElement<SearchComb>(_SearchComb_QNAME, SearchComb.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SearchCombResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "SearchCombResponse")
+    public JAXBElement<SearchCombResponse> createSearchCombResponse(SearchCombResponse value) {
+        return new JAXBElement<SearchCombResponse>(_SearchCombResponse_QNAME, SearchCombResponse.class, null, value);
     }
 
     /**

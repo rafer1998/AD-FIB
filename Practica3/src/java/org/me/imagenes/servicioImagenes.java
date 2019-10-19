@@ -537,4 +537,128 @@ public class servicioImagenes {
         return 1;
     }
 
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "SearchComb")
+    public List<Image> SearchComb(@WebParam(name = "autorbus") String autorbus, @WebParam(name = "desbus") String desbus, @WebParam(name = "titulobus") String titulobus, @WebParam(name = "fechabus") String fechabus, @WebParam(name = "palclavebusqueda") String palclavebusqueda) {
+        Connection connection = null;        
+        ArrayList<Image> resultado = new ArrayList<Image>();
+        
+        int bool_autor = 0;
+        int bool_descrip = 0;
+        int bool_titulo = 0;
+        int bool_fecha = 0;
+        int bool_pal = 0;
+        
+        String vpalclavebusqueda [] = palclavebusqueda.split(";");
+        
+        try {           
+            PreparedStatement statement,statement2;
+            String query,query2;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            try{
+                query = "SELECT * FROM imagen";
+                query2 = "select count(id) from imagen ";
+                
+                //Comprobacion -> campo de datos vacio [0] o no [1]
+                if (autorbus != null && !autorbus.isEmpty())
+                    bool_autor = 1;
+                if (desbus != null && !desbus.isEmpty())
+                    bool_descrip = 1;
+                if (titulobus != null && !titulobus.isEmpty())
+                    bool_titulo = 1;
+                if (fechabus != null && !fechabus.isEmpty())
+                    bool_fecha = 1;
+                if (palclavebusqueda != null && !palclavebusqueda.isEmpty())
+                    bool_pal = 1;
+                
+                int num = -1;
+                int nume = 0; //esta variable es para saber si toca where o and
+                if (bool_autor == 1) {
+                    if (nume == 0) query += " WHERE";
+                    else query += " and";
+                    nume ++;
+                    query += " autor LIKE '"+autorbus+"'";
+                }
+                if (bool_descrip == 1) {
+                    if (nume == 0) query += " where";
+                    else query += " and";
+                    nume ++;
+                    query += " descripcion LIKE '"+desbus+"'";
+                }
+                if (bool_fecha == 1) {
+                     if (nume == 0) query += " where";
+                    else query += " and";
+                    nume ++;
+                    query += " fecha_creacion LIKE '"+fechabus+"'";
+                }
+                if (bool_titulo == 1) {
+                     if (nume == 0) query += " where";
+                    else query += " and";
+                    nume ++;
+                    query += " titulo LIKE '"+titulobus+"'";
+                }
+                if (bool_pal == 1) {
+                    for (int v = 0; v< vpalclavebusqueda.length ;v++) {
+                        if (nume == 0) query += "where";
+                        else query += " and";
+                        nume ++;
+                        query += " palabras_clave LIKE '"+vpalclavebusqueda[v]+"'";
+                    }
+                }
+                
+                statement = connection.prepareStatement(query);
+                statement2 = connection.prepareStatement(query2);
+
+                ResultSet rs = statement.executeQuery(); 
+                ResultSet rs2 = statement2.executeQuery(); 
+                
+                if (rs2.next()) {
+                    //Numero de imagenes en la BD
+                    num = rs2.getInt(1);
+                    if(nume == 0)
+                        num = 0; //Si no se busca ningun campo -> no sale ninguna imagen
+                }
+                if (num > 0){
+                    while (rs.next()) {
+                        Image res = new Image();
+                    
+                        res.setID(rs.getInt("id"));
+                        res.setTitulo(rs.getString("titulo"));
+                        res.setAutor(rs.getString(("autor")));
+                        res.setDescripcion(rs.getString("descripcion"));
+                        res.setCreaDate(rs.getString("fecha_creacion"));
+                        res.setKeywords(rs.getString("palabras_clave"));
+                        res.setFichero(rs.getString("nombre_fichero"));
+
+                        resultado.add(res);                    
+                    }
+                }
+            }    
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+              
+        }
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultado;
+    }
+
+
 }

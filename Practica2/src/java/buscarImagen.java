@@ -67,7 +67,7 @@ public class buscarImagen extends HttpServlet {
             String query, query2;
             
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
-            query = "select * from imagen";
+            query = "SELECT * FROM imagen";
             out.println("<h1> Imagenes encontradas </h1>");
             
             //Comprobacion -> campo de datos vacio [0] o no [1]
@@ -85,40 +85,40 @@ public class buscarImagen extends HttpServlet {
             int num = -1;
             int nume = 0; //esta variable es para saber si toca where o and
             if (bool_autor == 1) {
-                if (nume == 0) query += " where";
+                if (nume == 0) query += " WHERE";
                 else query += " and";
                 nume ++;
-                query += " autor like "+autorbus+"";
+                query += " autor LIKE '"+autorbus+"'";
             }
             if (bool_descrip == 1) {
                 if (nume == 0) query += " where";
                 else query += " and";
                 nume ++;
-                query += " descripcion like "+desbus+"";
+                query += " descripcion LIKE '"+desbus+"'";
             }
             if (bool_fecha == 1) {
                  if (nume == 0) query += " where";
                 else query += " and";
                 nume ++;
-                query += " fecha_creacion like "+fechabus+"";
+                query += " fecha_creacion LIKE '"+fechabus+"'";
             }
             if (bool_titulo == 1) {
                  if (nume == 0) query += " where";
                 else query += " and";
                 nume ++;
-                query += " titulo like "+titulobus+"";
+                query += " titulo LIKE '"+titulobus+"'";
             }
             if (bool_pal == 1) {
                 for (int v = 0; v< vpalclavebusqueda.length ;v++) {
                     if (nume == 0) query += "where";
                     else query += " and";
                     nume ++;
-                    query += " palabras_clave like "+vpalclavebusqueda[v]+"";
+                    query += " palabras_clave LIKE '"+vpalclavebusqueda[v]+"'";
                 }
             }
          
             //Seleccion de todas las imagenes
-             out.println("<h1> Query "+query+" </h1>");
+             out.println("<h1>"+query+" </h1>");
             //Cuenta todas las imagenes de la BD
             query2 = "select count(id) from imagen ";
             
@@ -131,6 +131,8 @@ public class buscarImagen extends HttpServlet {
             if (rs2.next()) {
                 //Numero de imagenes en la BD
                 num = rs2.getInt(1);
+                if(nume == 0)
+                    num = 0; //Si no se busca ningun campo -> no sale ninguna imagen
             }
             if (num > 0){
                 out.println("<table style=\"width:100%\"> "
@@ -138,10 +140,7 @@ public class buscarImagen extends HttpServlet {
                         + "<th>Id</th> <th>Titulo</th> <th>Descripcion</th> <th>Autor</th> <th>Fecha Creación</th> <th>Fecha_Alta</th> <th>Nombre Fichero</th> <th>Modificar Foto</th> <th>Eliminar Foto</th>"
                         + "</tr> ");
                 while (rs.next()) {
-                    //Bucle con todas las imagenes
-                    int trobat = 0;
-                    int falla = -1; //inicializamos a -1 para saber si no estan todos los campos vacios
-                    
+                    //Bucle con todas las imagenes                    
                     //Obtencion parametros de la imagen -> BD
                     String palabra = rs.getString("palabras_clave");
                     String[] parts = palabra.split(";");  
@@ -152,68 +151,28 @@ public class buscarImagen extends HttpServlet {
                     String fechaf = rs.getString("fecha_creacion");
                     String fechaa = rs.getString("fecha_alta");
                     String nomf = rs.getString("nombre_fichero");
-                    /*
-                     if (bool_pal != 0) {
-                        //Comprobacion palabras clave
-                        for (int i = 0; i < parts.length && trobat == 0; ++i) {
-                            for (int j = 0; j < vpalclavebusqueda.length && trobat == 0; ++j) {
-                                if (parts[i].equals(vpalclavebusqueda[j])) {
-                                   trobat = 1;
-                                   falla = 0;
-                                }   
-                                if((i == parts.length - 1) && (j == vpalclavebusqueda.length - 1) && trobat != 1){
-                                    falla = 1;
-                                }
-                            }
-                        }
-                     }
-                    if (falla  != 1 && bool_autor != 0) {
-                        //Comprobacion autor
-                        if (!autorf.equals(autorbus)) falla = 1; //autor no es igual -> busqueda erronea
-                        else falla = 0; //autor es igual -> busqueda correcta por ahora
-                    }
-                    if (falla != 1 && bool_titulo != 0) {
-                        //Comprobacion titulo
-                        if (!titulof.equals(titulobus)) falla = 1;
-                        else falla = 0;
-                    }
-                    if (falla != 1 && bool_descrip != 0) {
-                        //Comprobacion descripcion
-                        if (!descripcionf.equals(desbus)) falla = 1;
-                        else falla = 0;
-                    }
-                    if (falla != 1 && bool_fecha != 0) {
-                        //Comprobacion fecha
-                        if (!fechaf.equals(fechabus)) falla = 1;
-                        else falla = 0;
-                    }
-                    */
-                    //if (falla == 0) {
-                        //Si coincide todos los campos ->
-                        out.println("<tr> "
-                                           + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descripcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>"); 
-                                   if (autorf.equals(autor)){
-                                       //El usuario es el mismo que el autor de la imagen
-                                       out.println("<td><form action=\"modificarImagen.jsp\"> "
-                                                    + "<input type=\"submit\" value=\"Modificar Imagen\"> "
-                                                    + "<input type=\"hidden\" name=\"titulo\" value =\"" + titulof + "\"> "
-                                                    + "<input type=\"hidden\" name=\"descripcion\" value =\"" + descripcionf + "\">"
-                                                    + "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + palabra + "\">"
-                                                    + "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + fechaf + "\">"
-                                                    + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
-                                                    + "</form></td>"
-                                                    );
-                                       out.println("<td><form action=\"eliminarImagen\" method=\"POST\"> "
-                                                    + "<input type=\"submit\" value=\"Eliminar Imagen\"> "
-                                                    + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
-                                                    + "<input type=\"hidden\" name=\"nombre_fichero\" value =\"" + nomf + "\">"
-                                                    + "</form></td>");
-                                   }                               
-                                   out.println("</tr>");
-                    //}
                     
+                    out.println("<tr> "
+                                + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descripcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>"); 
+                               if (autorf.equals(autor)){
+                                   //El usuario es el mismo que el autor de la imagen
+                                   out.println("<td><form action=\"modificarImagen.jsp\"> "
+                                                + "<input type=\"submit\" value=\"Modificar Imagen\"> "
+                                                + "<input type=\"hidden\" name=\"titulo\" value =\"" + titulof + "\"> "
+                                                + "<input type=\"hidden\" name=\"descripcion\" value =\"" + descripcionf + "\">"
+                                                + "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + palabra + "\">"
+                                                + "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + fechaf + "\">"
+                                                + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
+                                                + "</form></td>"
+                                                );
+                                   out.println("<td><form action=\"eliminarImagen\" method=\"POST\"> "
+                                                + "<input type=\"submit\" value=\"Eliminar Imagen\"> "
+                                                + "<input type=\"hidden\" name=\"id\" value =\"" + idf + "\">"
+                                                + "<input type=\"hidden\" name=\"nombre_fichero\" value =\"" + nomf + "\">"
+                                                + "</form></td>");
+                               }                               
+                               out.println("</tr>");       
                 }
-                
             } 
             out.println("</table>");
             
