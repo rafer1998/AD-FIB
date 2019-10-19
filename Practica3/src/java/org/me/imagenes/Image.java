@@ -1,5 +1,6 @@
 package org.me.imagenes;
 
+
 public class Image {
     private int id;
     private String titulo;
@@ -7,17 +8,19 @@ public class Image {
     private String descripcion;    
     private String creaDate;
     private String keywords;     
+    private String fichero;
     
     public Image(){    
     }
     
-    public Image(int id, String Titulo, String Autor, String Descripcion, String creaDate, String keywords){
+    public Image(int id, String Titulo, String Autor, String Descripcion, String creaDate, String keywords, String fichero){
         this.id = id;
         this.titulo = Titulo;
         this.autor = Autor;
         this.descripcion = Descripcion;
         this.creaDate = creaDate;
         this.keywords = keywords;
+        this.fichero = fichero;
     }
     
     //getters
@@ -45,6 +48,10 @@ public class Image {
         return keywords;
     }
     
+    public String getFichero(){
+        return fichero;
+    }
+    
     //setters
     public void setID(int id){
         this.id = id;
@@ -68,5 +75,9 @@ public class Image {
     
     public void setKeywords(String keywords){
         this.keywords = keywords;
+    }
+    
+    public void setFichero(String fichero){
+        this.fichero = fichero;
     }
 }

@@ -5,6 +5,10 @@
  */
 package org.me.imagenes;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -64,7 +68,7 @@ public class servicioImagenes {
                 statement.setString(5, Image.getAutor());
                 statement.setString(6, Image.getCreaDate());
                 statement.setString(7, altaDate);
-                statement.setString(8, Image.getTitulo());
+                statement.setString(8, Image.getFichero());
                 
                 statement.executeUpdate();                
             }
@@ -487,4 +491,50 @@ public class servicioImagenes {
         }
         return resultado;
     }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "DeleteImage")
+    public int DeleteImage(@WebParam(name = "img") Image img) {
+        Connection connection = null;
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            //id
+            int id = img.getID();   
+            
+            try{
+                query = "DELETE FROM IMAGEN "
+                        + "WHERE ID = ?"; 
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, id);         
+                statement.executeUpdate();                
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+                return 0;
+            }
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+                return 0;
+            }
+        }
+        return 1;
+    }
+
 }

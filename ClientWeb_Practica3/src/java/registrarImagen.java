@@ -3,27 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
-import java.sql.Connection;
 //import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
@@ -62,13 +50,20 @@ public class registrarImagen extends HttpServlet {
         //Parametros de la imagen
         img.setTitulo(request.getParameter("titulo"));  
         img.setDescripcion(request.getParameter("descripcion"));
-        img.setKeywords(request.getParameter("palabras_clave"));       
+        img.setKeywords(request.getParameter("palabras_clave")); 
+        
+        final Part filePart = request.getPart("fichero");
+        String nombrefichero = getFileName(filePart);
+        String extensionfichero = getExtensionName(filePart);  
+        String nombreTotal = nombrefichero.concat(extensionfichero);        
+        img.setFichero(nombreTotal);        
         
         String autor = "NULL";   
         HttpSession misession= (HttpSession) request.getSession();
         autor = (String) misession.getAttribute("autor");
         img.setAutor(autor);        
-        img.setCreaDate(request.getParameter("fecha"));  
+        img.setCreaDate(request.getParameter("fecha")); 
+ 
         
         try {            
             out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
@@ -144,5 +139,4 @@ public class registrarImagen extends HttpServlet {
         org.me.imagenes.ServicioImagenes port = service.getServicioImagenesPort();
         return port.registerImage(image);
     }
-
 }

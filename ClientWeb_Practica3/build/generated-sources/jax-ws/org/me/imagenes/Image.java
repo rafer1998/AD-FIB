@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="autor" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="creaDate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="descripcion" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="fichero" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="ID" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="keywords" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="titulo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
@@ -36,6 +37,7 @@ import javax.xml.bind.annotation.XmlType;
     "autor",
     "creaDate",
     "descripcion",
+    "fichero",
     "id",
     "keywords",
     "titulo"
@@ -45,6 +47,7 @@ public class Image {
     protected String autor;
     protected String creaDate;
     protected String descripcion;
+    protected String fichero;
     @XmlElement(name = "ID")
     protected int id;
     protected String keywords;
@@ -120,6 +123,30 @@ public class Image {
      */
     public void setDescripcion(String value) {
         this.descripcion = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad fichero.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFichero() {
+        return fichero;
+    }
+
+    /**
+     * Define el valor de la propiedad fichero.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFichero(String value) {
+        this.fichero = value;
     }
 
     /**

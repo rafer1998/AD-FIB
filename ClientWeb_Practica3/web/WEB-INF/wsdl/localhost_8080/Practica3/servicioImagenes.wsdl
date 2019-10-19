@@ -4,11 +4,23 @@
 <xsd:import namespace="http://imagenes.me.org/" schemaLocation="http://localhost:8080/Practica3/servicioImagenes?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="DeleteImage">
-<part name="parameters" element="tns:DeleteImage"/>
+<message name="SearchbyCreatDate">
+<part name="parameters" element="tns:SearchbyCreatDate"/>
 </message>
-<message name="DeleteImageResponse">
-<part name="parameters" element="tns:DeleteImageResponse"/>
+<message name="SearchbyCreatDateResponse">
+<part name="parameters" element="tns:SearchbyCreatDateResponse"/>
+</message>
+<message name="SearchbyTitle">
+<part name="parameters" element="tns:SearchbyTitle"/>
+</message>
+<message name="SearchbyTitleResponse">
+<part name="parameters" element="tns:SearchbyTitleResponse"/>
+</message>
+<message name="ListImages">
+<part name="parameters" element="tns:ListImages"/>
+</message>
+<message name="ListImagesResponse">
+<part name="parameters" element="tns:ListImagesResponse"/>
 </message>
 <message name="RegisterImage">
 <part name="parameters" element="tns:RegisterImage"/>
@@ -22,17 +34,23 @@
 <message name="ModifyImageResponse">
 <part name="parameters" element="tns:ModifyImageResponse"/>
 </message>
-<message name="SearchbyTitle">
-<part name="parameters" element="tns:SearchbyTitle"/>
+<message name="SearchbyKeywords">
+<part name="parameters" element="tns:SearchbyKeywords"/>
 </message>
-<message name="SearchbyTitleResponse">
-<part name="parameters" element="tns:SearchbyTitleResponse"/>
+<message name="SearchbyKeywordsResponse">
+<part name="parameters" element="tns:SearchbyKeywordsResponse"/>
 </message>
-<message name="SearchbyId">
-<part name="parameters" element="tns:SearchbyId"/>
+<message name="DeleteImage">
+<part name="parameters" element="tns:DeleteImage"/>
 </message>
-<message name="SearchbyIdResponse">
-<part name="parameters" element="tns:SearchbyIdResponse"/>
+<message name="DeleteImageResponse">
+<part name="parameters" element="tns:DeleteImageResponse"/>
+</message>
+<message name="UploadFile">
+<part name="parameters" element="tns:UploadFile"/>
+</message>
+<message name="UploadFileResponse">
+<part name="parameters" element="tns:UploadFileResponse"/>
 </message>
 <message name="SearchbyAuthor">
 <part name="parameters" element="tns:SearchbyAuthor"/>
@@ -40,28 +58,24 @@
 <message name="SearchbyAuthorResponse">
 <part name="parameters" element="tns:SearchbyAuthorResponse"/>
 </message>
-<message name="SearchbyKeywords">
-<part name="parameters" element="tns:SearchbyKeywords"/>
+<message name="SearchbyId">
+<part name="parameters" element="tns:SearchbyId"/>
 </message>
-<message name="SearchbyKeywordsResponse">
-<part name="parameters" element="tns:SearchbyKeywordsResponse"/>
-</message>
-<message name="ListImages">
-<part name="parameters" element="tns:ListImages"/>
-</message>
-<message name="ListImagesResponse">
-<part name="parameters" element="tns:ListImagesResponse"/>
-</message>
-<message name="SearchbyCreatDate">
-<part name="parameters" element="tns:SearchbyCreatDate"/>
-</message>
-<message name="SearchbyCreatDateResponse">
-<part name="parameters" element="tns:SearchbyCreatDateResponse"/>
+<message name="SearchbyIdResponse">
+<part name="parameters" element="tns:SearchbyIdResponse"/>
 </message>
 <portType name="servicioImagenes">
-<operation name="DeleteImage">
-<input wsam:Action="http://imagenes.me.org/servicioImagenes/DeleteImageRequest" message="tns:DeleteImage"/>
-<output wsam:Action="http://imagenes.me.org/servicioImagenes/DeleteImageResponse" message="tns:DeleteImageResponse"/>
+<operation name="SearchbyCreatDate">
+<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyCreatDateRequest" message="tns:SearchbyCreatDate"/>
+<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyCreatDateResponse" message="tns:SearchbyCreatDateResponse"/>
+</operation>
+<operation name="SearchbyTitle">
+<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyTitleRequest" message="tns:SearchbyTitle"/>
+<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyTitleResponse" message="tns:SearchbyTitleResponse"/>
+</operation>
+<operation name="ListImages">
+<input wsam:Action="http://imagenes.me.org/servicioImagenes/ListImagesRequest" message="tns:ListImages"/>
+<output wsam:Action="http://imagenes.me.org/servicioImagenes/ListImagesResponse" message="tns:ListImagesResponse"/>
 </operation>
 <operation name="RegisterImage">
 <input wsam:Action="http://imagenes.me.org/servicioImagenes/RegisterImageRequest" message="tns:RegisterImage"/>
@@ -71,34 +85,48 @@
 <input wsam:Action="http://imagenes.me.org/servicioImagenes/ModifyImageRequest" message="tns:ModifyImage"/>
 <output wsam:Action="http://imagenes.me.org/servicioImagenes/ModifyImageResponse" message="tns:ModifyImageResponse"/>
 </operation>
-<operation name="SearchbyTitle">
-<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyTitleRequest" message="tns:SearchbyTitle"/>
-<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyTitleResponse" message="tns:SearchbyTitleResponse"/>
+<operation name="SearchbyKeywords">
+<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyKeywordsRequest" message="tns:SearchbyKeywords"/>
+<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyKeywordsResponse" message="tns:SearchbyKeywordsResponse"/>
 </operation>
-<operation name="SearchbyId">
-<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyIdRequest" message="tns:SearchbyId"/>
-<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyIdResponse" message="tns:SearchbyIdResponse"/>
+<operation name="DeleteImage">
+<input wsam:Action="http://imagenes.me.org/servicioImagenes/DeleteImageRequest" message="tns:DeleteImage"/>
+<output wsam:Action="http://imagenes.me.org/servicioImagenes/DeleteImageResponse" message="tns:DeleteImageResponse"/>
+</operation>
+<operation name="UploadFile">
+<input wsam:Action="http://imagenes.me.org/servicioImagenes/UploadFileRequest" message="tns:UploadFile"/>
+<output wsam:Action="http://imagenes.me.org/servicioImagenes/UploadFileResponse" message="tns:UploadFileResponse"/>
 </operation>
 <operation name="SearchbyAuthor">
 <input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyAuthorRequest" message="tns:SearchbyAuthor"/>
 <output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyAuthorResponse" message="tns:SearchbyAuthorResponse"/>
 </operation>
-<operation name="SearchbyKeywords">
-<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyKeywordsRequest" message="tns:SearchbyKeywords"/>
-<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyKeywordsResponse" message="tns:SearchbyKeywordsResponse"/>
-</operation>
-<operation name="ListImages">
-<input wsam:Action="http://imagenes.me.org/servicioImagenes/ListImagesRequest" message="tns:ListImages"/>
-<output wsam:Action="http://imagenes.me.org/servicioImagenes/ListImagesResponse" message="tns:ListImagesResponse"/>
-</operation>
-<operation name="SearchbyCreatDate">
-<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyCreatDateRequest" message="tns:SearchbyCreatDate"/>
-<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyCreatDateResponse" message="tns:SearchbyCreatDateResponse"/>
+<operation name="SearchbyId">
+<input wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyIdRequest" message="tns:SearchbyId"/>
+<output wsam:Action="http://imagenes.me.org/servicioImagenes/SearchbyIdResponse" message="tns:SearchbyIdResponse"/>
 </operation>
 </portType>
 <binding name="servicioImagenesPortBinding" type="tns:servicioImagenes">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="DeleteImage">
+<operation name="SearchbyCreatDate">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="SearchbyTitle">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="ListImages">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -125,7 +153,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="SearchbyTitle">
+<operation name="SearchbyKeywords">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -134,7 +162,16 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="SearchbyId">
+<operation name="DeleteImage">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="UploadFile">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -152,25 +189,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="SearchbyKeywords">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="ListImages">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="SearchbyCreatDate">
+<operation name="SearchbyId">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
