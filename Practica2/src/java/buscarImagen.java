@@ -63,6 +63,11 @@ public class buscarImagen extends HttpServlet {
         out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
         
         try{
+            PreparedStatement statement,statement2;
+            String query, query2;
+            
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            query = "select * from imagen";
             out.println("<h1> Imagenes encontradas </h1>");
             
             //Comprobacion -> campo de datos vacio [0] o no [1]
@@ -78,18 +83,48 @@ public class buscarImagen extends HttpServlet {
                 bool_pal = 1;
             
             int num = -1;
-            PreparedStatement statement,statement2;
-            String query, query2;
-            
-            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
-            
+            int nume = 0; //esta variable es para saber si toca where o and
+            if (bool_autor == 1) {
+                if (nume == 0) query += " where";
+                else query += " and";
+                nume ++;
+                query += " autor like "+autorbus+"";
+            }
+            if (bool_descrip == 1) {
+                if (nume == 0) query += " where";
+                else query += " and";
+                nume ++;
+                query += " descripcion like "+desbus+"";
+            }
+            if (bool_fecha == 1) {
+                 if (nume == 0) query += " where";
+                else query += " and";
+                nume ++;
+                query += " fecha_creacion like "+fechabus+"";
+            }
+            if (bool_titulo == 1) {
+                 if (nume == 0) query += " where";
+                else query += " and";
+                nume ++;
+                query += " titulo like "+titulobus+"";
+            }
+            if (bool_pal == 1) {
+                for (int v = 0; v< vpalclavebusqueda.length ;v++) {
+                    if (nume == 0) query += "where";
+                    else query += " and";
+                    nume ++;
+                    query += " palabras_clave like "+vpalclavebusqueda[v]+"";
+                }
+            }
+         
             //Seleccion de todas las imagenes
-            query = "select * from imagen"; 
+             out.println("<h1> Query "+query+" </h1>");
             //Cuenta todas las imagenes de la BD
-            query2 = "select count(id) from imagen";
+            query2 = "select count(id) from imagen ";
             
             statement = connection.prepareStatement(query);
             statement2 = connection.prepareStatement(query2);
+            
             ResultSet rs = statement.executeQuery(); 
             ResultSet rs2 = statement2.executeQuery(); 
             
@@ -117,7 +152,7 @@ public class buscarImagen extends HttpServlet {
                     String fechaf = rs.getString("fecha_creacion");
                     String fechaa = rs.getString("fecha_alta");
                     String nomf = rs.getString("nombre_fichero");
-                    
+                    /*
                      if (bool_pal != 0) {
                         //Comprobacion palabras clave
                         for (int i = 0; i < parts.length && trobat == 0; ++i) {
@@ -152,7 +187,8 @@ public class buscarImagen extends HttpServlet {
                         if (!fechaf.equals(fechabus)) falla = 1;
                         else falla = 0;
                     }
-                    if (falla == 0) {
+                    */
+                    //if (falla == 0) {
                         //Si coincide todos los campos ->
                         out.println("<tr> "
                                            + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descripcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>"); 
@@ -174,7 +210,8 @@ public class buscarImagen extends HttpServlet {
                                                     + "</form></td>");
                                    }                               
                                    out.println("</tr>");
-                    }
+                    //}
+                    
                 }
                 
             } 
