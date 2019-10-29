@@ -44,7 +44,7 @@ public class mostrarImagen extends HttpServlet {
             
             String nombreFichero = request.getParameter("nombre_fichero");
             out.println("<h2>Imagen: " + nombreFichero + "</h2>");
-            String path = "http://localhost:8080/Practica2/imagenes/";
+            String path = "./imagenes/";
             String compl = path.concat(nombreFichero);              
             out.println("<img src=" + compl +">"); 
             

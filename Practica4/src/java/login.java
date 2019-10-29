@@ -1,27 +1,32 @@
+
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import java.io.File;
+import practica4.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author ruben
+ * @author ruben.barcelo
  */
-@WebServlet(urlPatterns = {"/eliminarImagen"})
-public class eliminarImagen extends HttpServlet {
+@WebServlet(urlPatterns = {"/login"})
+public class login extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,58 +40,38 @@ public class eliminarImagen extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();  
-        
-        //CSS
+        PrintWriter out = response.getWriter();
         out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
-        
-        //Parametros para eliminar imagen
-        String id = request.getParameter("id"); 
-        String nombre_fichero = request.getParameter("nombre_fichero");
+        String usuario = request.getParameter("usuario");
+        out.println("<h1>Usuario: " + usuario + "</h1>");
+            
+        String password = request.getParameter("password");
+        out.println("<h1>Password: " + password + "</h1>");
         
         Connection connection = null; 
-        try {            
+        try {
+             // create a database connection
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");        
+            
             PreparedStatement statement;
             String query;
-            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");       
             
-            try{
-                query = "DELETE FROM IMAGEN "
-                        + "WHERE ID = ?"; 
-                statement = connection.prepareStatement(query);
-                statement.setString(1, id);
-                statement.executeUpdate(); 
-                
-                String path = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica2\\web\\imagenes\\";
-                String compl = path.concat(nombre_fichero);    
-                
-                File f = new File(compl);
-                if (f.delete())
-                    System.out.println("El fichero ha sido borrado satisfactoriamente");
-                else
-                    System.out.println("El fichero no puede ser borrado");                
+            query = "SELECT * FROM usuarios WHERE id_usuario LIKE '"+ usuario +"' AND password LIKE '"+ password +"'";
+            System.out.println("Query -> " + query);
+            statement = connection.prepareStatement(query);
+            ResultSet rs = statement.executeQuery();       
+
+            HttpSession misession;
+             if(rs.next()){
+                misession = request.getSession(true);
+                misession.setAttribute("autor", usuario);
+                response.sendRedirect("menu.jsp");
             }
-            catch(Exception e){
-                response.sendRedirect("error.jsp");
-            }   
-            out.println("<h4>Has eliminado la imagen correctamente!</h4>");
-            
-            out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
-            out.println("<input type=\"submit\" value=\"Menu\">");
-            out.println("</form>");
-        }        
-        catch (Exception e) {
+            else
+                response.sendRedirect("error.jsp");            
+        }
+         catch (Exception e) {
             System.err.println(e.getMessage());
-        } 
-        finally {
-            try {
-                if (connection != null)
-                    connection.close();               
-            } 
-            catch (Exception e) {
-                // connection close failed.
-                System.err.println(e.getMessage());                
-            }
         }
     }
 
@@ -117,6 +102,7 @@ public class eliminarImagen extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+        
     }
 
     /**

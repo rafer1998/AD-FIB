@@ -53,19 +53,11 @@ public class register extends HttpServlet {
             PreparedStatement statement;
             String query;
             
-            query = "select * from usuarios";
+            query = "SELECT * FROM usuarios WHERE id_usuario LIKE '"+ usuario  +"'";
             statement = connection.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
-
-            boolean exist = false;
-            while (!exist && rs.next()) {
-                //Bucle que comprueba si el nombre de usuario ya se encuentra utilizado
-                if(rs.getString("id_usuario").equals(usuario)){                    
-                        exist = true;                               
-                }  
-                rs.next();
-            }
-            if(exist){
+            
+            if(rs.next()){
                 //Error 1: usuario ya existe
                 out.println("<br><h2>Error</h2>");
                 out.println("<form action=\"menu.jsp\" method=\"POST\"> <p> <input type=\"submit\" value=\"Volver al menu\"></p></form>");

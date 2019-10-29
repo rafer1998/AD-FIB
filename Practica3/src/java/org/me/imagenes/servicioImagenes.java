@@ -5,10 +5,6 @@
  */
 package org.me.imagenes;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -582,33 +578,34 @@ public class servicioImagenes {
                     if (nume == 0) query += " WHERE";
                     else query += " and";
                     nume ++;
-                    query += " autor LIKE '"+autorbus+"'";
+                    query += " autor LIKE '%"+autorbus+"%'";
                 }
                 if (bool_descrip == 1) {
-                    if (nume == 0) query += " where";
+                    if (nume == 0) query += " WHERE";
                     else query += " and";
                     nume ++;
-                    query += " descripcion LIKE '"+desbus+"'";
+                    query += " descripcion LIKE '%"+desbus+"%'";
                 }
                 if (bool_fecha == 1) {
-                     if (nume == 0) query += " where";
+                     if (nume == 0) query += " WHERE";
                     else query += " and";
                     nume ++;
-                    query += " fecha_creacion LIKE '"+fechabus+"'";
+                    query += " fecha_creacion LIKE '%"+fechabus+"%'";
                 }
                 if (bool_titulo == 1) {
-                     if (nume == 0) query += " where";
+                     if (nume == 0) query += " WHERE";
                     else query += " and";
                     nume ++;
-                    query += " titulo LIKE '"+titulobus+"'";
+                    query += " titulo LIKE '%"+titulobus+"%'";
                 }
                 if (bool_pal == 1) {
                     for (int v = 0; v< vpalclavebusqueda.length ;v++) {
-                        if (nume == 0) query += "where";
+                        if (nume == 0) query += " WHERE";
                         else query += " and";
                         nume ++;
-                        query += " palabras_clave LIKE '"+vpalclavebusqueda[v]+"'";
+                        query += " palabras_clave LIKE '%"+vpalclavebusqueda[v]+"%'";
                     }
+                    System.out.println("Query -> " + query);
                 }
                 
                 statement = connection.prepareStatement(query);
@@ -659,6 +656,4 @@ public class servicioImagenes {
         }
         return resultado;
     }
-
-
 }

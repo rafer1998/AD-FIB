@@ -80,7 +80,17 @@ public class modificarImagen extends HttpServlet {
         }
         catch (Exception e) {
             System.err.println(e.getMessage());
-        }
+        }       
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }    
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

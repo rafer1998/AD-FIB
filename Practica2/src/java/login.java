@@ -53,46 +53,32 @@ public class login extends HttpServlet {
             PreparedStatement statement;
             String query;
             
-            query = "select * from usuarios";
+            query = "SELECT * FROM usuarios WHERE id_usuario LIKE '"+ usuario +"' AND password LIKE '"+ password +"'";            
             statement = connection.prepareStatement(query);
-            ResultSet rs = statement.executeQuery();   
-            
-            boolean exist = false;
-            while (!exist && rs.next()) {
-                // read the result set
-                if(rs.getString("id_usuario").equals(usuario)){
-                    if(rs.getString("password").equals(password)){
-                        //el usuario y la contraseña coinciden -> usuario existe en la BD
-                        exist = true;
-                    }                
-                }                
-            }            
+            ResultSet rs = statement.executeQuery();       
 
             HttpSession misession;
-            if(exist){
+             if(rs.next()){
                 misession = request.getSession(true);
                 misession.setAttribute("autor", usuario);
                 response.sendRedirect("menu.jsp");
             }
             else
-                response.sendRedirect("error.jsp");
-            
-            
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet login</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet login at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-            
+                response.sendRedirect("error.jsp"); 
             
         }
-         catch (Exception e) {
+        catch (Exception e) {
             System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());                
+            }
         }
     }
 

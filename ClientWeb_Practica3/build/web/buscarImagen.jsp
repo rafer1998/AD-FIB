@@ -28,7 +28,7 @@
                response.sendRedirect("login.jsp");
         %>
         <h1>Buscar Imagen</h1>
-        <form action="buscarImagen">
+        <form action="buscarImagen" method="POST">
             <h3>Inserta los campos de busqueda</h3>
             
             <h4>Palabras Clave</h4>

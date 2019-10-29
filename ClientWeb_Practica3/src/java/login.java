@@ -53,23 +53,13 @@ public class login extends HttpServlet {
             PreparedStatement statement;
             String query;
             
-            query = "select * from usuarios";
+            query = "SELECT * FROM usuarios WHERE id_usuario LIKE '"+ usuario +"' AND password LIKE '"+ password +"'";
+            System.out.println("Query -> " + query);
             statement = connection.prepareStatement(query);
-            ResultSet rs = statement.executeQuery();   
-            
-            boolean exist = false;
-            while (!exist && rs.next()) {
-                // read the result set
-                if(rs.getString("id_usuario").equals(usuario)){
-                    if(rs.getString("password").equals(password)){
-                        //el usuario y la contraseña coinciden -> usuario existe en la BD
-                        exist = true;
-                    }                
-                }                
-            }            
+            ResultSet rs = statement.executeQuery();       
 
             HttpSession misession;
-            if(exist){
+             if(rs.next()){
                 misession = request.getSession(true);
                 misession.setAttribute("autor", usuario);
                 response.sendRedirect("menu.jsp");

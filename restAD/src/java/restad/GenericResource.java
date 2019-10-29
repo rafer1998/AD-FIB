@@ -88,9 +88,6 @@ public class GenericResource {
  * @param id
  * @return
  */
- @Path("searchID/{id}")
- @GET
- @Produces(MediaType.TEXT_HTML);
- public String searchByID (@PathParam("id") int id){return null;}
+ 
         
 }

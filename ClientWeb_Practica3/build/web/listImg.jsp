@@ -29,57 +29,86 @@
                response.sendRedirect("login.jsp");
         %>        
         
-        <h1>Lista de Imagenes</h1> 
-        
-        <%-- start web service invocation --%><hr/>
-        <%
-        java.util.List<org.me.imagenes.Image> result = null;
-        try {
-            org.me.imagenes.ServicioImagenes_Service service = new org.me.imagenes.ServicioImagenes_Service();
-            org.me.imagenes.ServicioImagenes port = service.getServicioImagenesPort();
-            // TODO process result here
-            result = port.listImages();
-        } catch (Exception ex) {
-            System.out.println("Error");
-        }
-        %>
-        <%-- end web service invocation --%><hr/>
-
-        
+        <h1>Lista de Imagenes</h1>     
+        <table style=width:100%> 
+            <tr>
+                <th>Id</th> 
+                <th>Titulo</th> 
+                <th>Descripcion</th> 
+                <th>Autor</th> 
+                <th>Fecha Creación</th> 
+                <th>Fecha_Alta</th> 
+                <th>Nombre Fichero</th> 
+                <th>Previsualizar Foto</th> 
+                <th>Modificar Foto</th> 
+                <th>Eliminar Foto</th>
+            </tr> 
           <%            
-            try{                
-                for(org.me.imagenes.Image img : result)
-                {
-                    String autorImg = img.getAutor(); 
-           %>                
-                <table>   
-                    <tr>
-                      <td><%=img.getTitulo()%></td>   
-                      <%
-                      if(autorImg.equals(autor)){
-                      //Si la imagen pertenece al usuario actual -> puede modificar y borrar
-                      %> 
-                          <td><form action="modificarImagen.jsp" method="POST">  
-                                  <input type="submit" value="Modificar Imagen"> 
-                                  <input type="hidden" name="titulo" value ="<%=img.getTitulo()%>">  
-                                  <input type="hidden" name="descripcion" value ="<%=img.getDescripcion()%>">
-                                  <input type="hidden" name="palabras_clave" value ="<%=img.getKeywords()%>">
-                                  <input type="hidden" name="fecha_creacion" value ="<%=img.getCreaDate()%>">
-                                  <input type="hidden" name="id" value ="<%=img.getID()%>">
+            Connection connection = null;
+            try{
+                String query;
+                PreparedStatement statement;
+                Class.forName("org.apache.derby.jdbc.ClientDriver");  
 
-
-                          </form></td>
-                          <td><form action="eliminarImagen" method="POST">  
-                                  <input type="submit" value="Eliminar Imagen"> 
-                                  <input type="hidden" name="id" value ="<%=img.getID()%>">  
-                                  <input type="hidden" name="nombre_fichero" value ="<%=img.getTitulo()%>">
-                          </form></td>
-                      <%   
-                      }
-                      %> 
-                    </tr>
+                connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
+                
+                //Seleccion de todas las imagenes de la BD
+                query = "select * from imagen";
+                statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery();
+                
+                String autorImg, palabra, idf, titulo, descripcion, fechaf, fechaa, nomf = "null";
+               
+                    while(rs.next()){ 
+                           //Bucle para listar todas las imagenes y generar TABLA
+                           autorImg = rs.getString("AUTOR");
+                           palabra = rs.getString("palabras_clave"); 
+                           idf = rs.getString("id");
+                           titulo = rs.getString("titulo");
+                           descripcion = rs.getString("descripcion");
+                           fechaf = rs.getString("fecha_creacion");
+                           fechaa = rs.getString("fecha_alta");
+                           nomf = rs.getString("nombre_fichero");
+                %>  
+                          
+                         <tr>
+                             <td><%=idf%></td> 
+                             <td><%=titulo%></td> 
+                             <td><%=descripcion%></td> 
+                             <td><%=autorImg%></td> 
+                             <td><%=fechaf%></td> 
+                             <td><%=fechaa%></td> 
+                             <td><%=nomf%></td>                             
+             
+                            <td><form action="mostrarImagen"> 
+                                    <input type="submit" value="Previsualizar Imagen"> 
+                                    <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">
+                            </form></td>
+                            <%
+                            if(autorImg.equals(autor)){
+                            //Si la imagen pertenece al usuario actual -> puede modificar y borrar
+                            %> 
+                                <td><form action="modificarImagen.jsp" method="POST">  
+                                        <input type="submit" value="Modificar Imagen"> 
+                                        <input type="hidden" name="titulo" value ="<%=rs.getString("TITULO")%>">  
+                                        <input type="hidden" name="descripcion" value ="<%=rs.getString("DESCRIPCION")%>">
+                                        <input type="hidden" name="palabras_clave" value ="<%=rs.getString("PALABRAS_CLAVE")%>">
+                                        <input type="hidden" name="fecha_creacion" value ="<%=rs.getString("FECHA_CREACION")%>">
+                                        <input type="hidden" name="id" value ="<%=rs.getString("ID")%>">
+                                        
+                                        
+                                </form></td>
+                                <td><form action="eliminarImagen" method="POST">  
+                                        <input type="submit" value="Eliminar Imagen"> 
+                                        <input type="hidden" name="id" value ="<%=rs.getString("ID")%>">  
+                                        <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">
+                                </form></td>
+                            <%   
+                            }
+                            %> 
+                          </tr>
                 <%  
-                }
+                    }
                 %>
                 </table>
                 
@@ -90,6 +119,16 @@
             }
             catch(Exception e){
                 System.err.println(e.getMessage());
+            }
+            finally {
+                try {
+                    if (connection != null) {
+                        connection.close();
+                    }
+                } catch (SQLException e) {
+                    // connection close failed.
+                    System.err.println(e.getMessage());
+                }
             }
          %>  
     </body>

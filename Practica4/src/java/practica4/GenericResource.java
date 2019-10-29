@@ -60,6 +60,8 @@ public class GenericResource {
             @FormParam("author") String author,
             @FormParam("creation") String crea_date){
         Connection connection = null;
+        String resultado = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        
         try {           
             PreparedStatement statement;
             String query;
@@ -95,11 +97,13 @@ public class GenericResource {
                 statement.setString(7, altaDate);
                 statement.setString(8, title);
                 
-                statement.executeUpdate();                
+                statement.executeUpdate(); 
+                resultado += "<h1>Imagen subida correctamente</h1>";
             }
             catch(Exception e){
                 System.err.println(e.getMessage());
-                return "<h1>Imagen no se ha podido subir</h1>";
+                resultado +=  "<h1>Imagen no se ha podido subir</h1>";
+                return resultado;
             }
         } 
         catch (Exception e) {
@@ -113,10 +117,15 @@ public class GenericResource {
             catch (Exception e) {
                 // connection close failed.
                 System.err.println(e.getMessage());
-                return "<h1>Imagen no se ha podido subir</h1>";
+                resultado += "<h1>Imagen no se ha podido subir</h1>";
+                return resultado;
             }
         }
-        return "<h1>Imagen subida correctamente</h1>";
+        
+        resultado += "<form action=\"/Practica4/menu.jsp\" method=\"POST\">  ";
+        resultado += "<input type=\"submit\" value=\"Volver al menu\">";
+        resultado += "</form>";
+        return resultado;
     }
     /**
  * POST method to register a new image
@@ -137,7 +146,7 @@ public class GenericResource {
                             @FormParam("id") String id,
                             @FormParam("crea_date") String crea_date) 
  {    
-    String resultat = ""; 
+    String resultat = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>"; 
     Connection connection = null;
        try {           
            PreparedStatement statement;
@@ -160,13 +169,17 @@ public class GenericResource {
 
                statement.executeUpdate();   
                
-               resultat = "<h1> Imatge modificada </h1>";
+               resultat += "<h1> Imatge modificada </h1>";
            }
            catch(Exception e){
                System.err.println(e.getMessage());
-               resultat = "<h1> Error </h1>";
+               resultat += "<h1> Error </h1>";
                return resultat;
            }
+           resultat += "</table>";
+           resultat += "<form action=\"/Practica4/menu.jsp\" method=\"POST\" >";  
+           resultat += "<input type=\"submit\" value=\"Menu\">";              
+           resultat += "</form>"; 
        } 
        catch (Exception e) {
            System.err.println(e.getMessage());
@@ -192,8 +205,9 @@ public class GenericResource {
  @Path("list")
  @GET
  @Produces(MediaType.TEXT_HTML)
- public String listImages () {   
-    String resultat = "<h1>Llista Imatges</1><br>";
+ public String listImages () {  
+    String resultat = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>"; 
+    resultat += "<h1>Llista Imatges</1><br>";
     Connection connection = null;
     try{
         String query;
@@ -208,7 +222,8 @@ public class GenericResource {
         ResultSet rs = statement.executeQuery();
 
         String autorImg = "null";  
-        resultat += "<table>";
+        resultat += "<table style=width:100%>";
+                  
         
             while(rs.next()){ 
                    //Bucle para listar todas las imagenes y generar TABLA
@@ -306,25 +321,25 @@ public String searchCombo (@FormParam("title") String title,
                 if (nume == 0) query += " WHERE";
                 else query += " and";
                 nume ++;
-                query += " autor LIKE '"+author+"'";
+                query += " autor LIKE '%"+author+"%'";
             }
             if (bool_descrip == 1) {
                 if (nume == 0) query += " WHERE";
                 else query += " and";
                 nume ++;
-                query += " descripcion LIKE '"+description+"'";
+                query += " descripcion LIKE '%"+description+"%'";
             }
             if (bool_fecha == 1) {
                  if (nume == 0) query += " WHERE";
                 else query += " and";
                 nume ++;
-                query += " fecha_creacion LIKE '"+crea_date+"'";
+                query += " fecha_creacion LIKE '%"+crea_date+"%'";
             }
             if (bool_titulo == 1) {
                  if (nume == 0) query += " WHERE";
                 else query += " and";
                 nume ++;
-                query += " titulo LIKE '"+title+"'";
+                query += " titulo LIKE '%"+title+"%'";
             }
             if (bool_pal == 1) {
                 for (int v = 0; v< vpalclavebusqueda.length ;v++) {

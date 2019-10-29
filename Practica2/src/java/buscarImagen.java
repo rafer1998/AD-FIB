@@ -88,37 +88,35 @@ public class buscarImagen extends HttpServlet {
                 if (nume == 0) query += " WHERE";
                 else query += " and";
                 nume ++;
-                query += " autor LIKE '"+autorbus+"'";
+                query += " autor LIKE '%"+autorbus+"%'";
             }
             if (bool_descrip == 1) {
                 if (nume == 0) query += " where";
                 else query += " and";
                 nume ++;
-                query += " descripcion LIKE '"+desbus+"'";
+                query += " descripcion LIKE '%"+desbus+"%'";
             }
             if (bool_fecha == 1) {
                  if (nume == 0) query += " where";
                 else query += " and";
                 nume ++;
-                query += " fecha_creacion LIKE '"+fechabus+"'";
+                query += " fecha_creacion LIKE '%"+fechabus+"%'";
             }
             if (bool_titulo == 1) {
                  if (nume == 0) query += " where";
                 else query += " and";
                 nume ++;
-                query += " titulo LIKE '"+titulobus+"'";
+                query += " titulo LIKE '%"+titulobus+"%'";
             }
             if (bool_pal == 1) {
                 for (int v = 0; v< vpalclavebusqueda.length ;v++) {
                     if (nume == 0) query += "where";
                     else query += " and";
                     nume ++;
-                    query += " palabras_clave LIKE '"+vpalclavebusqueda[v]+"'";
+                    query += " palabras_clave LIKE '%"+vpalclavebusqueda[v]+"%'";
                 }
             }
          
-            //Seleccion de todas las imagenes
-             out.println("<h1>"+query+" </h1>");
             //Cuenta todas las imagenes de la BD
             query2 = "select count(id) from imagen ";
             
@@ -178,10 +176,20 @@ public class buscarImagen extends HttpServlet {
             
             out.println("<form action=\"buscarImagen.jsp\" method=\"POST\">  ");
             out.println("<input type=\"submit\" value=\"Volver a la busqueda\">");
-            out.println("</form>");   
-        }
+            out.println("</form>");           
+        } 
         catch (Exception e) {
             System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
         }
     }
 

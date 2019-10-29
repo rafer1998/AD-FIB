@@ -30,6 +30,19 @@
         %>        
         
         <h1>Lista de Imagenes</h1>     
+        <table style=width:100%> 
+            <tr>
+                <th>Id</th> 
+                <th>Titulo</th> 
+                <th>Descripcion</th> 
+                <th>Autor</th> 
+                <th>Fecha Creación</th> 
+                <th>Fecha_Alta</th> 
+                <th>Nombre Fichero</th> 
+                <th>Previsualizar Foto</th> 
+                <th>Modificar Foto</th> 
+                <th>Eliminar Foto</th>
+            </tr> 
           <%            
             Connection connection = null;
             try{
@@ -44,16 +57,29 @@
                 statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery();
                 
-                String autorImg = "null";
-                %>                
-                <table>                    
-                <%
+                String autorImg, palabra, idf, titulo, descripcion, fechaf, fechaa, nomf = "null";
+               
                     while(rs.next()){ 
                            //Bucle para listar todas las imagenes y generar TABLA
                            autorImg = rs.getString("AUTOR");
+                           palabra = rs.getString("palabras_clave"); 
+                           idf = rs.getString("id");
+                           titulo = rs.getString("titulo");
+                           descripcion = rs.getString("descripcion");
+                           fechaf = rs.getString("fecha_creacion");
+                           fechaa = rs.getString("fecha_alta");
+                           nomf = rs.getString("nombre_fichero");
                 %>  
-                          <tr>
-                            <td><%=rs.getString("TITULO")%></td>   
+                          
+                         <tr>
+                             <td><%=idf%></td> 
+                             <td><%=titulo%></td> 
+                             <td><%=descripcion%></td> 
+                             <td><%=autorImg%></td> 
+                             <td><%=fechaf%></td> 
+                             <td><%=fechaa%></td> 
+                             <td><%=nomf%></td>                             
+             
                             <td><form action="mostrarImagen"> 
                                     <input type="submit" value="Previsualizar Imagen"> 
                                     <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">

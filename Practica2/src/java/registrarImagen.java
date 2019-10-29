@@ -77,11 +77,25 @@ public class registrarImagen extends HttpServlet {
             String query;
             int id = -1;
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");        
-            query = "select count(id) from imagen";
+            query = "select max(id) from imagen";
             statement = connection.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
+            
+            
+            OutputStream outS = null;
+            outS = new FileOutputStream(new File(path + File.separator + nombrefichero + extensionfichero));
+            InputStream inS = null;
+            inS = filePart.getInputStream();
+            
+            int read = 0;
+            final byte[] bytes = new byte[1024];
+
+            while ((read = inS.read(bytes)) != -1) {
+                outS.write(bytes, 0, read);
+            }
+            
             if (rs.next()) {
-                id = rs.getInt(1);
+                id = rs.getInt(1)+1;
             }
             try{
                 query = "insert into imagen values(?,?,?,?,?,?,?,?)";
@@ -98,28 +112,27 @@ public class registrarImagen extends HttpServlet {
                 statement.executeUpdate();                
             }
             catch(Exception e){
+                System.err.println(e.getMessage());
                 response.sendRedirect("error.jsp");
             }            
-            out.println("<h4>Has subido la imagen correctamente!</h4>");
-            
-            OutputStream outS = null;
-            outS = new FileOutputStream(new File(path + File.separator + nombrefichero + extensionfichero));
-            InputStream inS = null;
-            inS = filePart.getInputStream();
-            
-            int read = 0;
-            final byte[] bytes = new byte[1024];
-
-            while ((read = inS.read(bytes)) != -1) {
-                outS.write(bytes, 0, read);
-            }  
+            out.println("<h4>Has subido la imagen correctamente!</h4>");                   
             
             out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
             out.println("<input type=\"submit\" value=\"Volver al menu\">");
             out.println("</form>");   
         }
-         catch (Exception e) {
+        catch (Exception e) {
             System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());                
+            }
         }
     }
     protected String getFileName(Part p){
