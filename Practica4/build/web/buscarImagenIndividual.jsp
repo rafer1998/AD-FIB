@@ -29,32 +29,55 @@
         %>
         
         <h1>Buscar Imagen</h1>
-        <form onchange="afegirPath()" id="formulari" class="form-signin" action="./webresources/generic/searchID/" method="GET">
-            <h3>Inserta los campos de busqueda</h3>
-            
+        
+        <form id="formulari" name="formulari" action="./webresources/generic/searchID/" method="POST">        
             <h4>Id</h4>
-            <input type="hidden" name="id" value="2">                  
-            <button type="submit"> Enviar </button>
+            <input type="text" name="id" id="id" value="">                  
+            <input onclick="afegirPathID(document.getElementById('id').value)" type="submit" value="Enviar">
+        </form>
+        <br>
+        
+        <form id="formulari2" name="formulari2" action="./webresources/generic/searchTitle/" method="POST">        
+            <h4>Titulo</h4>
+            <input type="text" name="title" id="title" value="">                  
+            <input onclick="afegirPathTitle(document.getElementById('title').value)" type="submit" value="Enviar">
+        </form>
+        <br>
+        
+        <form id="formulari3" name="formulari3" action="./webresources/generic/searchAuthor/" method="POST">        
+            <h4>Autor</h4>
+            <input type="text" name="autor" id="autor" value="">                  
+            <input onclick="afegirPathAuthor(document.getElementById('autor').value)" type="submit" value="Enviar">
+        </form>
+        <br>
+        
+        <form id="formulari4" name="formulari4" action="./webresources/generic/searchCreationDate/" method="POST">        
+            <h4>Fecha Creacion</h4>
+            <input type="text" name="date" id="date" value="">                  
+            <input onclick="afegirPathCreaDate(document.getElementById('date').value)" type="submit" value="Enviar">
         </form>
         <br>
         
         
         <form action="menu.jsp" method="POST" >        	
             <input type="submit" value="Menu">
-    	</form>
+    	</form> 
         
+        <script>
+        function afegirPathID(data) {
+            document.getElementById("formulari").action = "./webresources/generic/searchID/" + data;
+        }
+        function afegirPathTitle(data) {
+            document.getElementById("formulari2").action = "./webresources/generic/searchTitle/" + data;
+        }
+        function afegirPathAuthor(data) {
+            document.getElementById("formulari3").action = "./webresources/generic/searchAuthor/" + data;
+        }
         
-        <form onchange="afegirPath()" id="formulari" class="form-signin" action="./webresources/generic/searchByID/" method="GET">
-            <select name="accio" id="accio">
-                <option value="ID">Id</option>
-                <option value="Title">Titol</option>
-                <option value="Author">Autor</option>
-                <option value="CreationDate">Data de creació</option>
-                <option value="Keywords">Tags</option>
-            </select> 
-            <input type="number" id="text" name="text" required autofocus>            
-
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Buscar</button>
-        </form> 
+        function afegirPathCreaDate(data) {
+            document.getElementById("formulari4").action = "./webresources/generic/searchCreationDate/" + data;
+        }
+        </script>
+        
     </body>
 </html>
