@@ -20,17 +20,14 @@
 	</head>
 	<body>
         <%
-        //Comprobacion usuario con sesion iniciada//
-        
-        String autor = "admin";   
-        
-        /*
+        //Comprobacion usuario con sesion iniciada//        
+        String autor;         
         HttpSession misession= (HttpSession) request.getSession();
         autor = (String) misession.getAttribute("autor");
         if(autor == null)
                //Si el usuario no tiene sesion ->  redirect a login//
                response.sendRedirect("login.jsp");
-        */
+        
         %>   
             
             

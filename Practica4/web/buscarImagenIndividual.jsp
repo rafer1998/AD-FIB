@@ -20,12 +20,12 @@
     <body>
         <%
         //Comprobacion usuario con sesion iniciada//
-        //String autor = "NULL";   
-        //HttpSession misession= (HttpSession) request.getSession();
-        //autor = (String) misession.getAttribute("autor");
-        //if(autor == null)
+        String autor = "NULL";   
+        HttpSession misession= (HttpSession) request.getSession();
+        autor = (String) misession.getAttribute("autor");
+        if(autor == null)
                //Si el usuario no tiene sesion ->  redirect a login//
-        //       response.sendRedirect("login.jsp");
+               response.sendRedirect("login.jsp");
         %>
         
         <h1>Buscar Imagen</h1>
@@ -58,6 +58,13 @@
         </form>
         <br>
         
+         <form id="formulari5" name="formulari5" action="./webresources/generic/searchByKeywords/" method="POST">        
+            <h4>Palabra clave</h4>
+            <input type="text" name="keyword" id="keyword" value="">                  
+            <input onclick="afegirPathKeywords(document.getElementById('keyword').value)" type="submit" value="Enviar">
+        </form>
+        <br><br>
+        
         
         <form action="menu.jsp" method="POST" >        	
             <input type="submit" value="Menu">
@@ -72,10 +79,12 @@
         }
         function afegirPathAuthor(data) {
             document.getElementById("formulari3").action = "./webresources/generic/searchAuthor/" + data;
-        }
-        
+        }        
         function afegirPathCreaDate(data) {
             document.getElementById("formulari4").action = "./webresources/generic/searchCreationDate/" + data;
+        }        
+        function afegirPathKeywords(data) {
+            document.getElementById("formulari5").action = "./webresources/generic/searchByKeywords/" + data;
         }
         </script>
         
