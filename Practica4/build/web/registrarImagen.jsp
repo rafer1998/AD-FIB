@@ -38,13 +38,11 @@
         	<p>Descripcion: <input type="text" name="description" required></p>
         	<p>Palabras clave: <input type="text" name="keywords" placeholder="Palabras separadas con ';'" required></p>        	
                 <p><label for="date">Fecha creación:</label>
-                    <input type="date" name="creation" value="2010-12-16; " required></p>
-                <p><label for="avatar">Seleccionar imagen:</label>
-                    <input type="file" id="fichero" name="fichero" accept="image/png, image/jpeg" required></p>                
-        	<p>
-                <input type="hidden" name="author" value ="<%=autor%>"> 
+                    <input type="date" name="creation" value="2010-12-16; " required></p>            
+        	
+                <p><input type="hidden" name="author" value ="<%=autor%>"></p>
                 
-                
+                <p>
             	<input type="submit" value="Enviar">
             	<input type="reset" value="Borrar">
         	</p>
