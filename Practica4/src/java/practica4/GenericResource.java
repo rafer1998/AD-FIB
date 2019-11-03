@@ -221,15 +221,27 @@ public class GenericResource {
         statement = connection.prepareStatement(query);
         ResultSet rs = statement.executeQuery();
 
-        String autorImg = "null";  
+        String autorImg, palabra, idf, titulo, descripcion, fechaf, fechaa, nomf = "null";  
         resultat += "<table style=width:100%>";
-                  
+        resultat += "<tr>";
+        resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th></tr>";
+                        
         
             while(rs.next()){ 
                    //Bucle para listar todas las imagenes y generar TABLA
                    autorImg = rs.getString("AUTOR");
-                   String titulo = rs.getString("TITULO");
-                   resultat += "<tr><td>" + titulo  + "</td>";
+                    palabra = rs.getString("palabras_clave"); 
+                    idf = rs.getString("id");
+                    titulo = rs.getString("titulo");
+                    descripcion = rs.getString("descripcion");
+                    fechaf = rs.getString("fecha_creacion");
+                    fechaa = rs.getString("fecha_alta");
+                    nomf = rs.getString("nombre_fichero");
+                   
+                    resultat += "<tr><td>" + idf  + "</td><td>" + titulo  + "</td><td>" + descripcion  + "</td><td>" + autorImg  
+                           + "</td><td>" + fechaf  + "</td><td>" + fechaa  + "</td>";
+                    
+                   //Modificar Imagen
                    resultat += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
                    resultat += "<input type=\"submit\" value=\"Modificar Imagen\">";
                    resultat += "<input type=\"hidden\" name=\"titulo\" value =\"" + rs.getString("TITULO") + "\"> ";
@@ -261,6 +273,74 @@ public class GenericResource {
     }
     return resultat;
  }
+ 
+/**
+* GET method to search images by id
+* @param id
+* @return
+*/
+@Path("searchID/{id}")
+@GET
+@Produces(MediaType.TEXT_HTML)
+public String searchByID (@PathParam("id") int id){
+    Connection connection = null;
+    String resultat = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            String autorImg, palabra, titulo, descripcion, fechaf, fechaa = "null";  
+            resultat += "<table style=width:100%>";
+            resultat += "<tr>";
+            resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th></tr>";
+            try{
+                query = "select * "
+                      + "from imagen "
+                      + "where id = ?";
+                
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, id);  
+                ResultSet rs = statement.executeQuery(); 
+                if(rs.next()){
+                    autorImg = rs.getString("autor");
+                    titulo = rs.getString("titulo");
+                    descripcion = rs.getString("descripcion");
+                    fechaf = rs.getString("fecha_creacion");
+                    fechaa = rs.getString("fecha_alta");
+                    palabra = rs.getString("palabras_clave");
+                    
+                    resultat += "<tr> "
+                       + "<td> "+id+" </td> <td>"+titulo+"</td> <td>"+descripcion+"</td> <td>"+autorImg+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td></tr>";  
+                } 
+                
+                resultat += "</table>";
+                resultat += "<form action=\"/Practica4/menu.jsp\" method=\"POST\" >";  
+                resultat += "<input type=\"submit\" value=\"Menu\">";              
+                resultat += "</form>"; 
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultat;
+}
 
 /**
     * POST method to search image
@@ -282,7 +362,7 @@ public String searchCombo (@FormParam("title") String title,
                             @FormParam("crea_date") String crea_date){
     
     Connection connection = null;        
-    String resultado = "";
+    String resultado = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
 
     int bool_autor = 0;
     int bool_descrip = 0;
@@ -359,7 +439,7 @@ public String searchCombo (@FormParam("title") String title,
             resultado += "<h1> Imagenes encontradas </h1>"; 
                     resultado += "<table style=\"width:100%\"> "
                             + "<tr>"
-                            + "<th>Id</th> <th>Titulo</th> <th>Descripcion</th> <th>Autor</th> <th>Fecha Creación</th> <th>Fecha_Alta</th> <th>Nombre Fichero</th> <th>Modificar Foto</th> <th>Eliminar Foto</th>"
+                            + "<th>Id</th> <th>Titulo</th> <th>Descripcion</th> <th>Autor</th> <th>Fecha Creación</th> <th>Fecha_Alta</th> <th>Modificar Foto</th> <th>Eliminar Foto</th>"
                             + "</tr> ";
                     
             if (rs2.next()) {
@@ -375,13 +455,28 @@ public String searchCombo (@FormParam("title") String title,
                     String autorf = rs.getString("autor");
                     String descirpcionf = rs.getString("descripcion");
                     String fechaf = rs.getString("fecha_creacion");
-                    String nomf = rs.getString("nombre_fichero");
                     String fechaa = rs.getString("fecha_alta");                  
                     
                     resultado += "<tr> "
-                       + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descirpcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td> <td>"+nomf+"</td>";                                   
+                       + "<td> "+idf+" </td> <td>"+titulof+"</td> <td>"+descirpcionf+"</td> <td>"+autorf+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td>";  
+                    
+                    //Modificar Imagen
+                    resultado += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
+                    resultado += "<input type=\"submit\" value=\"Modificar Imagen\">";
+                    resultado += "<input type=\"hidden\" name=\"titulo\" value =\"" + rs.getString("TITULO") + "\"> ";
+                    resultado += "<input type=\"hidden\" name=\"descripcion\" value =\"" + rs.getString("DESCRIPCION") + "\">";
+                    resultado += "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + rs.getString("PALABRAS_CLAVE") + "\">";
+                    resultado += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
+                    resultado += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
+                    resultado += "</form></td>"; 
+                    resultado += "</tr>";
                 }
             }
+            
+            resultado += "</table>";
+            resultado += "<form action=\"/Practica4/menu.jsp\" method=\"POST\" >";  
+            resultado += "<input type=\"submit\" value=\"Menu\">";              
+            resultado += "</form>"; 
         }    
         catch(Exception e){
             System.err.println(e.getMessage());
