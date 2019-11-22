@@ -3,6 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
@@ -45,6 +48,7 @@ public class registrarImagen extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+                
         Image img = new Image();          
         
         //Parametros de la imagen
@@ -63,15 +67,24 @@ public class registrarImagen extends HttpServlet {
         autor = (String) misession.getAttribute("autor");
         img.setAutor(autor);        
         img.setCreaDate(request.getParameter("fecha")); 
- 
-        
-        try {            
+           
+        String filePath = "C:\\Users\\ruben\\Downloads\\Imagenes\\" + nombreTotal;
+        File file = new File(filePath);
+         
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream inputStream = new BufferedInputStream(fis);
+            byte[] imageBytes = new byte[(int) file.length()];
+            inputStream.read(imageBytes);            
+              
             out.println("<head><style> body {background-color: lightblue; text-align: center; }</style></head>");
-            int res = registerImage(img);
+            int res = registerImage(img, imageBytes);
+            
+            inputStream.close();
             if(res == 1)
                 out.println("<h4>Has subido la imagen correctamente!</h4>");
             else 
-                response.sendRedirect("error.jsp");    
+                response.sendRedirect("error.jsp"); 
                         
             out.println("<form action=\"menu.jsp\" method=\"POST\">  ");
             out.println("<input type=\"submit\" value=\"Volver al menu\">");
@@ -133,10 +146,13 @@ public class registrarImagen extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private int registerImage(org.me.imagenes.Image image) {
+    
+
+    private int registerImage(org.me.imagenes.Image image, byte[] imageBytes) {
         // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
         // If the calling of port operations may lead to race condition some synchronization is required.
         org.me.imagenes.ServicioImagenes port = service.getServicioImagenesPort();
-        return port.registerImage(image);
+        return port.registerImage(image, imageBytes);
     }
+
 }

@@ -51,7 +51,6 @@ public class registrarImagen extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         
-        final String path = ("C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica2\\web\\imagenes");
         final Part filePart = request.getPart("fichero");
         String nombrefichero = getFileName(filePart);
         String extensionfichero = getExtensionName(filePart);        
@@ -80,10 +79,10 @@ public class registrarImagen extends HttpServlet {
             query = "select max(id) from imagen";
             statement = connection.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
-            
-            
+                        
             OutputStream outS = null;
-            outS = new FileOutputStream(new File(path + File.separator + nombrefichero + extensionfichero));
+            String root = getServletContext().getRealPath("/imagenes");
+            outS = new FileOutputStream(new File(root + File.separator + nombrefichero + extensionfichero));
             InputStream inS = null;
             inS = filePart.getInputStream();
             

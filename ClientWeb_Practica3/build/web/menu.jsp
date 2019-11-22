@@ -31,7 +31,8 @@
         <h1>Menu</h1>        
         <a href="registrarImagen.jsp">Registrar Imagen</a><br>  
         <a href="listImg.jsp">Listar Imagenes</a><br>
-        <a href="buscarImagen.jsp">Buscar Imagen</a><br><br>  
+        <a href="buscarImagenIndividual.jsp">Buscar Imagen</a><br>  
+        <a href="buscarImagen.jsp">Buscar Imagen Combinada</a><br><br> 
         
         <form action="logout" method="POST">        	
             	<input type="submit" value="Logout">

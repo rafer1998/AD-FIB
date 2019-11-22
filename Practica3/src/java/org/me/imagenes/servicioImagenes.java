@@ -5,6 +5,12 @@
  */
 package org.me.imagenes;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,19 +25,30 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 
+import javax.xml.ws.soap.MTOM;
+
 /**
  *
  * @author ruben
  */
-@WebService(serviceName = "servicioImagenes")
+@WebService(serviceName = "servicioImagenes", wsdlLocation="WEB-INF/wsdl/ServicioImagenes.wsdl")
+@MTOM
 public class servicioImagenes {
     /**
      * Web service operation
      */
     @WebMethod(operationName = "RegisterImage")
-    public int RegisterImage(@WebParam(name = "Image") Image Image) {
+    public int RegisterImage(@WebParam(name = "Image") Image Image, @WebParam(name = "imageBytes") byte[] imageBytes) {
+        final String filePath = ("C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica3\\web\\imagenes\\" + Image.getFichero());
         Connection connection = null;
-        try {           
+        try {   
+            //Subida fichero al sistema
+            FileOutputStream fos = new FileOutputStream(filePath);
+            BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+            outputStream.write(imageBytes);
+            outputStream.close();
+                         
+            //Subida de fichero a BD
             PreparedStatement statement;
             String query;
             
@@ -89,6 +106,8 @@ public class servicioImagenes {
         }
         return 1;
     }
+    
+    
 
     /**
      * Web service operation
@@ -655,5 +674,28 @@ public class servicioImagenes {
             }
         }
         return resultado;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "DownloadImage")
+    public byte[] DownloadImage(@WebParam(name = "fileName") String fileName) {
+        String filePath = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica3\\web\\imagenes\\" + fileName;
+        System.out.println("Sending file: " + filePath);
+         
+        try {
+            File file = new File(filePath);
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream inputStream = new BufferedInputStream(fis);
+            byte[] fileBytes = new byte[(int) file.length()];
+            inputStream.read(fileBytes);
+            inputStream.close();
+             
+            return fileBytes;
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }   
+        return null;
     }
 }

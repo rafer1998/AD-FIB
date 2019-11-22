@@ -2,9 +2,17 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ * resources.add(MultiPartFeature.class);
  */
 package practica4;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,6 +32,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * REST Web Service
@@ -48,21 +59,32 @@ public class GenericResource {
     * @param keywords
     * @param author
     * @param crea_date
+    * @param file
     * @return
     */
     @Path("register")
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_HTML)
-    public String registerImage  (@FormParam("title") String title, 
-            @FormParam("description") String description,
-            @FormParam("keywords") String keywords,
-            @FormParam("author") String author,
-            @FormParam("creation") String crea_date){
+    public String registerImage  (@FormDataParam("title") String title, 
+            @FormDataParam("description") String description,
+            @FormDataParam("keywords") String keywords,
+            @FormDataParam("author") String author,
+            @FormDataParam("creation") String crea_date,
+            @FormDataParam("file") InputStream uploadedInputStream,
+	    @FormDataParam("file") FormDataContentDisposition fileDetail){
+        
         Connection connection = null;
         String resultado = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
         
-        try {           
+        try {      
+            //Subir la imagen al servidor
+            String pathFile = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica4\\web\\images\\" + fileDetail.getFileName();
+            writeToFile(uploadedInputStream, pathFile);
+            String output = "File uploaded to : " + pathFile;
+            System.out.println(output);            
+            
+            //subir la imagen a la BD
             PreparedStatement statement;
             String query;
             
@@ -118,6 +140,124 @@ public class GenericResource {
                 // connection close failed.
                 System.err.println(e.getMessage());
                 resultado += "<h1>Imagen no se ha podido subir</h1>";
+                return resultado;
+            }
+        }
+        
+        resultado += "<form action=\"/Practica4/menu.jsp\" method=\"POST\">  ";
+        resultado += "<input type=\"submit\" value=\"Volver al menu\">";
+        resultado += "</form>";
+        return resultado;
+    }
+    
+    private void writeToFile(InputStream uploadedInputStream, String pathFile) {
+        try {
+            OutputStream out = new FileOutputStream(new File(pathFile));
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            out = new FileOutputStream(new File(pathFile));
+            while ((read = uploadedInputStream.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+            }
+            out.flush();
+            out.close();
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }    
+   
+    
+    /**
+    * POST method to register a new image
+    * @param fileName
+    * @return
+    */
+    @Path("download")
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_HTML)
+    public String downloadImage  (@FormDataParam("fileName") String fileName){
+        String resultado = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        
+        try {      
+            String filePathEntrada = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica4\\web\\images\\" + fileName;
+            String filePathSalida = "C:\\Users\\ruben\\Downloads\\" + fileName;
+            
+            File file = new File(filePathEntrada);
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream inputStream = new BufferedInputStream(fis);            
+            
+            OutputStream outS = null;
+            outS = new FileOutputStream(new File(filePathSalida));
+            
+            int read = 0;
+            final byte[] bytes = new byte[1024];
+
+            while ((read = inputStream.read(bytes)) != -1) {
+                outS.write(bytes, 0, read);
+            }
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        
+        resultado += "<form action=\"/Practica4/menu.jsp\" method=\"POST\">  ";
+        resultado += "<input type=\"submit\" value=\"Volver al menu\">";
+        resultado += "</form>";
+        return resultado;
+    }
+      
+    
+    /**
+    * POST method to register a new image
+    * @param id
+    * @return
+    */
+    @Path("delete")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_HTML)
+    public String deleteImage  (@FormParam("id") String id){
+        Connection connection = null;
+        String resultado = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            
+            
+            try{
+                query = "DELETE FROM IMAGEN "
+                        + "WHERE ID = ?"; 
+                statement = connection.prepareStatement(query);                
+                statement.setString(1, id);                
+                statement.executeUpdate(); 
+                resultado += "<h1>Imagen eliminada correctamente</h1>";
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+                resultado +=  "<h1>Imagen no se ha podido eliminar</h1>";
+                return resultado;
+            }
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+                resultado += "<h1>Imagen no se ha podido eliminar</h1>";
                 return resultado;
             }
         }
@@ -224,12 +364,12 @@ public class GenericResource {
         String autorImg, palabra, idf, titulo, descripcion, fechaf, fechaa, nomf = "null";  
         resultat += "<table style=width:100%>";
         resultat += "<tr>";
-        resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th></tr>";
+        resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Descargar Imagen</th><th>Modificar Imagen</th><th>Eliminar Imagen</th></tr>";
                         
         
             while(rs.next()){ 
                    //Bucle para listar todas las imagenes y generar TABLA
-                   autorImg = rs.getString("AUTOR");
+                    autorImg = rs.getString("AUTOR");
                     palabra = rs.getString("palabras_clave"); 
                     idf = rs.getString("id");
                     titulo = rs.getString("titulo");
@@ -241,6 +381,13 @@ public class GenericResource {
                     resultat += "<tr><td>" + idf  + "</td><td>" + titulo  + "</td><td>" + descripcion  + "</td><td>" + autorImg  
                            + "</td><td>" + fechaf  + "</td><td>" + fechaa  + "</td>";
                     
+                   
+                   //Modificar Imagen
+                   resultat += "<td><form action=\"./download\" method=\"POST\" enctype=\"multipart/form-data\">";
+                   resultat += "<input type=\"submit\" value=\"Descargar Imagen\">";
+                   resultat += "<input type=\"hidden\" name=\"fileName\" value =\"" + rs.getString("NOMBRE_FICHERO") + "\">";
+                   resultat += "</form></td>"; 
+
                    //Modificar Imagen
                    resultat += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
                    resultat += "<input type=\"submit\" value=\"Modificar Imagen\">";
@@ -250,6 +397,13 @@ public class GenericResource {
                    resultat += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
                    resultat += "</form></td>"; 
+                   
+                   //Eliminar Imagen
+                   resultat += "<td><form action=\"./delete\" method=\"POST\">";
+                   resultat += "<input type=\"submit\" value=\"Eliminar Imagen\">";
+                   resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("id")+ "\"> ";
+                   resultat += "</form></td>";
+                   
                    resultat += "</tr>";
             }  
         resultat += "</table>";
@@ -280,7 +434,7 @@ public class GenericResource {
 * @return
 */
 @Path("searchID/{id}")
-@GET
+@POST
 @Produces(MediaType.TEXT_HTML)
 public String searchByID (@PathParam("id") int id){
     Connection connection = null;
@@ -292,10 +446,10 @@ public String searchByID (@PathParam("id") int id){
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
             
-            String autorImg, palabra, titulo, descripcion, fechaf, fechaa = "null";  
+            String autorImg, titulo, descripcion, fechaf, fechaa = "null";  
             resultat += "<table style=width:100%>";
             resultat += "<tr>";
-            resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th></tr>";
+            resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th><th>Eliminar Imagen</th></tr>";
             try{
                 query = "select * "
                       + "from imagen "
@@ -310,10 +464,26 @@ public String searchByID (@PathParam("id") int id){
                     descripcion = rs.getString("descripcion");
                     fechaf = rs.getString("fecha_creacion");
                     fechaa = rs.getString("fecha_alta");
-                    palabra = rs.getString("palabras_clave");
                     
                     resultat += "<tr> "
-                       + "<td> "+id+" </td> <td>"+titulo+"</td> <td>"+descripcion+"</td> <td>"+autorImg+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td></tr>";  
+                       + "<td> "+id+" </td> <td>"+titulo+"</td> <td>"+descripcion+"</td> <td>"+autorImg+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td>";  
+                    //Modificar Imagen
+                    resultat += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Modificar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"titulo\" value =\"" + rs.getString("TITULO") + "\"> ";
+                    resultat += "<input type=\"hidden\" name=\"descripcion\" value =\"" + rs.getString("DESCRIPCION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + rs.getString("PALABRAS_CLAVE") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
+                    resultat += "</form></td>"; 
+                    
+                    //Eliminar Imagen
+                    resultat += "<td><form action=\"./delete\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Eliminar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("id")+ "\"> ";
+                    resultat += "</form></td>";
+                   
+                    resultat += "</tr>";
                 } 
                 
                 resultat += "</table>";
@@ -340,6 +510,346 @@ public String searchByID (@PathParam("id") int id){
             }
         }
         return resultat;
+}
+
+/**
+* GET method to search images by title
+* @param title
+* @return
+*/
+@Path("searchTitle/{title}")
+@POST
+@Produces(MediaType.TEXT_HTML)
+public String searchByTitle (@PathParam("title") String title){
+    Connection connection = null;
+    String resultat = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            String autorImg, id, descripcion, fechaf, fechaa, titulo = "null";  
+            resultat += "<table style=width:100%>";
+            resultat += "<tr>";
+            resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th><th>Eliminar Imagen</th></tr>";
+            try{
+                query = "select * "
+                      + "from imagen "
+                      + "where titulo LIKE '%"+title+"%'";
+                
+                statement = connection.prepareStatement(query);   
+                ResultSet rs = statement.executeQuery(); 
+                while(rs.next()){
+                    titulo = rs.getString("titulo");
+                    autorImg = rs.getString("autor");
+                    id = rs.getString("id");
+                    descripcion = rs.getString("descripcion");
+                    fechaf = rs.getString("fecha_creacion");
+                    fechaa = rs.getString("fecha_alta");
+                    
+                    resultat += "<tr> "
+                       + "<td> "+id+" </td> <td>"+titulo+"</td> <td>"+descripcion+"</td> <td>"+autorImg+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td>";  
+                    //Modificar Imagen
+                    resultat += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Modificar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"titulo\" value =\"" + rs.getString("TITULO") + "\"> ";
+                    resultat += "<input type=\"hidden\" name=\"descripcion\" value =\"" + rs.getString("DESCRIPCION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + rs.getString("PALABRAS_CLAVE") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
+                    resultat += "</form></td>"; 
+                    
+                    //Eliminar Imagen
+                    resultat += "<td><form action=\"./delete\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Eliminar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("id")+ "\"> ";
+                    resultat += "</form></td>";
+                   
+                    resultat += "</tr>";
+                } 
+                
+                resultat += "</table>";
+                resultat += "<form action=\"/Practica4/menu.jsp\" method=\"POST\" >";  
+                resultat += "<input type=\"submit\" value=\"Menu\">";              
+                resultat += "</form>"; 
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return resultat;
+}
+
+/**
+* GET method to search images by author
+* @param author
+* @return
+*/
+@Path("searchAuthor/{author}")
+@POST
+@Produces(MediaType.TEXT_HTML)
+public String searchByAuthor (@PathParam("author") String author){
+    Connection connection = null;
+    String resultat = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            String autorImg, id, descripcion, fechaf, fechaa, titulo = "null";  
+            resultat += "<table style=width:100%>";
+            resultat += "<tr>";
+            resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th><th>Eliminar Imagen</th></tr>";
+            try{
+                query = "select * "
+                      + "from imagen "
+                      + "where autor LIKE '%"+author+"%'";
+                
+                statement = connection.prepareStatement(query);   
+                ResultSet rs = statement.executeQuery(); 
+                while(rs.next()){
+                    titulo = rs.getString("titulo");
+                    autorImg = rs.getString("autor");
+                    id = rs.getString("id");
+                    descripcion = rs.getString("descripcion");
+                    fechaf = rs.getString("fecha_creacion");
+                    fechaa = rs.getString("fecha_alta");
+                    
+                    resultat += "<tr> "
+                       + "<td> "+id+" </td> <td>"+titulo+"</td> <td>"+descripcion+"</td> <td>"+autorImg+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td>";
+                    
+                    //Modificar Imagen
+                    resultat += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Modificar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"titulo\" value =\"" + rs.getString("TITULO") + "\"> ";
+                    resultat += "<input type=\"hidden\" name=\"descripcion\" value =\"" + rs.getString("DESCRIPCION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + rs.getString("PALABRAS_CLAVE") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
+                    resultat += "</form></td>"; 
+                    
+                    //Eliminar Imagen
+                    resultat += "<td><form action=\"./delete\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Eliminar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("id")+ "\"> ";
+                    resultat += "</form></td>";
+                   
+                    resultat += "</tr>";
+                } 
+                
+                resultat += "</table>";
+                resultat += "<form action=\"/Practica4/menu.jsp\" method=\"POST\" >";  
+                resultat += "<input type=\"submit\" value=\"Menu\">";              
+                resultat += "</form>"; 
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    return resultat;    
+}
+
+/**
+* GET method to search images by creation date
+* @param creaDate
+* @return
+*/
+@Path("searchCreationDate/{date}")
+@POST
+@Produces(MediaType.TEXT_HTML)
+public String searchByCreationDate (@PathParam("date") String date){
+    Connection connection = null;
+    String resultat = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            String autorImg, id, descripcion, fechaf, fechaa, titulo = "null";  
+            resultat += "<table style=width:100%>";
+            resultat += "<tr>";
+            resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th><th>Eliminar Imagen</th></tr>";
+            try{
+                query = "select * "
+                      + "from imagen "
+                      + "where fecha_creacion LIKE '%"+date+"%'";
+                
+                statement = connection.prepareStatement(query);   
+                ResultSet rs = statement.executeQuery(); 
+                while(rs.next()){
+                    titulo = rs.getString("titulo");
+                    autorImg = rs.getString("autor");
+                    id = rs.getString("id");
+                    descripcion = rs.getString("descripcion");
+                    fechaf = rs.getString("fecha_creacion");
+                    fechaa = rs.getString("fecha_alta");
+                    
+                    resultat += "<tr> "
+                       + "<td> "+id+" </td> <td>"+titulo+"</td> <td>"+descripcion+"</td> <td>"+autorImg+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td>";  
+                    
+                    //Modificar Imagen
+                    resultat += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Modificar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"titulo\" value =\"" + rs.getString("TITULO") + "\"> ";
+                    resultat += "<input type=\"hidden\" name=\"descripcion\" value =\"" + rs.getString("DESCRIPCION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + rs.getString("PALABRAS_CLAVE") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
+                    resultat += "</form></td>"; 
+                    
+                    //Eliminar Imagen
+                    resultat += "<td><form action=\"./delete\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Eliminar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("id")+ "\"> ";
+                    resultat += "</form></td>";
+                   
+                    resultat += "</tr>";
+                } 
+                
+                resultat += "</table>";
+                resultat += "<form action=\"/Practica4/menu.jsp\" method=\"POST\" >";  
+                resultat += "<input type=\"submit\" value=\"Menu\">";              
+                resultat += "</form>"; 
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    return resultat;   
+}
+
+/**
+* GET method to search images by keyword
+* @param keywords
+* @return
+*/
+@Path("searchKeywords/{keywords}")
+@POST
+@Produces(MediaType.TEXT_HTML)
+public String searchByKeywords (@PathParam("keywords") String keywords){
+    Connection connection = null;
+    String resultat = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
+        try {           
+            PreparedStatement statement;
+            String query;
+            
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2"); 
+            
+            String autorImg, id, descripcion, fechaf, fechaa, titulo = "null";  
+            resultat += "<table style=width:100%>";
+            resultat += "<tr>";
+            resultat += "<th>Id</th><th>Titulo</th><th>Descripcion</th><th>Autor</th><th>Fecha Creacion</th><th>Fecha Alta</th><th>Modificar Imagen</th><th>Eliminar Imagen</th></tr>";
+            try{
+                query = "select * "
+                      + "from imagen "
+                      + "where palabras_clave LIKE '%"+keywords+"%'";
+                
+                statement = connection.prepareStatement(query);   
+                ResultSet rs = statement.executeQuery(); 
+                while(rs.next()){
+                    titulo = rs.getString("titulo");
+                    autorImg = rs.getString("autor");
+                    id = rs.getString("id");
+                    descripcion = rs.getString("descripcion");
+                    fechaf = rs.getString("fecha_creacion");
+                    fechaa = rs.getString("fecha_alta");
+                    
+                    resultat += "<tr> "
+                       + "<td> "+id+" </td> <td>"+titulo+"</td> <td>"+descripcion+"</td> <td>"+autorImg+"</td> <td>"+fechaf+"</td> <td>"+fechaa+"</td>";  
+                    
+                    //Modificar Imagen
+                    resultat += "<td><form action=\"/Practica4/modificarImagen.jsp\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Modificar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"titulo\" value =\"" + rs.getString("TITULO") + "\"> ";
+                    resultat += "<input type=\"hidden\" name=\"descripcion\" value =\"" + rs.getString("DESCRIPCION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"palabras_clave\" value =\"" + rs.getString("PALABRAS_CLAVE") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
+                    resultat += "</form></td>"; 
+
+                    //Eliminar Imagen
+                    resultat += "<td><form action=\"./delete\" method=\"POST\">";
+                    resultat += "<input type=\"submit\" value=\"Eliminar Imagen\">";
+                    resultat += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("id")+ "\"> ";
+                    resultat += "</form></td>";
+                   
+                    resultat += "</tr>";
+                    
+                } 
+                
+                resultat += "</table>";
+                resultat += "<form action=\"/Practica4/menu.jsp\" method=\"POST\" >";  
+                resultat += "<input type=\"submit\" value=\"Menu\">";              
+                resultat += "</form>"; 
+            }
+            catch(Exception e){
+                System.err.println(e.getMessage());
+            }            
+            
+        } 
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        } 
+        finally {
+            try {
+                if (connection != null)
+                    connection.close();               
+            } 
+            catch (Exception e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    return resultat; 
 }
 
 /**
@@ -469,6 +979,12 @@ public String searchCombo (@FormParam("title") String title,
                     resultado += "<input type=\"hidden\" name=\"fecha_creacion\" value =\"" + rs.getString("FECHA_CREACION") + "\">";
                     resultado += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("ID") + "\">";
                     resultado += "</form></td>"; 
+                    
+                    resultado += "<td><form action=\"./delete\" method=\"POST\">";
+                    resultado += "<input type=\"submit\" value=\"Eliminar Imagen\">";
+                    resultado += "<input type=\"hidden\" name=\"id\" value =\"" + rs.getString("id")+ "\"> ";
+                    resultado += "</form></td>";
+                   
                     resultado += "</tr>";
                 }
             }
@@ -499,6 +1015,6 @@ public String searchCombo (@FormParam("title") String title,
         }
     }
     return resultado;
-} 
+}     
         
 }

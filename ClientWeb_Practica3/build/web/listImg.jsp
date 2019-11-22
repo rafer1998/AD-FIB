@@ -39,7 +39,7 @@
                 <th>Fecha Creación</th> 
                 <th>Fecha_Alta</th> 
                 <th>Nombre Fichero</th> 
-                <th>Previsualizar Foto</th> 
+                <th>Descargar Foto</th> 
                 <th>Modificar Foto</th> 
                 <th>Eliminar Foto</th>
             </tr> 
@@ -78,16 +78,18 @@
                              <td><%=autorImg%></td> 
                              <td><%=fechaf%></td> 
                              <td><%=fechaa%></td> 
-                             <td><%=nomf%></td>                             
+                             <td><%=nomf%></td>                            
              
-                            <td><form action="mostrarImagen"> 
-                                    <input type="submit" value="Previsualizar Imagen"> 
-                                    <input type="hidden" name="nombre_fichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">
-                            </form></td>
+                            
                             <%
                             if(autorImg.equals(autor)){
                             //Si la imagen pertenece al usuario actual -> puede modificar y borrar
                             %> 
+                                <td><form action="descargarImagen" method="POST">  
+                                        <input type="submit" value="Descargar Imagen"> 
+                                        <input type="hidden" name="nombreFichero" value ="<%=rs.getString("NOMBRE_FICHERO")%>">   
+                                </form></td>
+                                
                                 <td><form action="modificarImagen.jsp" method="POST">  
                                         <input type="submit" value="Modificar Imagen"> 
                                         <input type="hidden" name="titulo" value ="<%=rs.getString("TITULO")%>">  
@@ -95,9 +97,8 @@
                                         <input type="hidden" name="palabras_clave" value ="<%=rs.getString("PALABRAS_CLAVE")%>">
                                         <input type="hidden" name="fecha_creacion" value ="<%=rs.getString("FECHA_CREACION")%>">
                                         <input type="hidden" name="id" value ="<%=rs.getString("ID")%>">
-                                        
-                                        
                                 </form></td>
+                                
                                 <td><form action="eliminarImagen" method="POST">  
                                         <input type="submit" value="Eliminar Imagen"> 
                                         <input type="hidden" name="id" value ="<%=rs.getString("ID")%>">  

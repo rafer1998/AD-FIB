@@ -26,6 +26,8 @@ public class ObjectFactory {
 
     private final static QName _DeleteImage_QNAME = new QName("http://imagenes.me.org/", "DeleteImage");
     private final static QName _DeleteImageResponse_QNAME = new QName("http://imagenes.me.org/", "DeleteImageResponse");
+    private final static QName _DownloadImage_QNAME = new QName("http://imagenes.me.org/", "DownloadImage");
+    private final static QName _DownloadImageResponse_QNAME = new QName("http://imagenes.me.org/", "DownloadImageResponse");
     private final static QName _ListImages_QNAME = new QName("http://imagenes.me.org/", "ListImages");
     private final static QName _ListImagesResponse_QNAME = new QName("http://imagenes.me.org/", "ListImagesResponse");
     private final static QName _ModifyImage_QNAME = new QName("http://imagenes.me.org/", "ModifyImage");
@@ -44,6 +46,8 @@ public class ObjectFactory {
     private final static QName _SearchbyKeywordsResponse_QNAME = new QName("http://imagenes.me.org/", "SearchbyKeywordsResponse");
     private final static QName _SearchbyTitle_QNAME = new QName("http://imagenes.me.org/", "SearchbyTitle");
     private final static QName _SearchbyTitleResponse_QNAME = new QName("http://imagenes.me.org/", "SearchbyTitleResponse");
+    private final static QName _RegisterImageImageBytes_QNAME = new QName("", "imageBytes");
+    private final static QName _DownloadImageResponseReturn_QNAME = new QName("", "return");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.me.imagenes
@@ -66,6 +70,22 @@ public class ObjectFactory {
      */
     public DeleteImageResponse createDeleteImageResponse() {
         return new DeleteImageResponse();
+    }
+
+    /**
+     * Create an instance of {@link DownloadImage }
+     * 
+     */
+    public DownloadImage createDownloadImage() {
+        return new DownloadImage();
+    }
+
+    /**
+     * Create an instance of {@link DownloadImageResponse }
+     * 
+     */
+    public DownloadImageResponse createDownloadImageResponse() {
+        return new DownloadImageResponse();
     }
 
     /**
@@ -239,6 +259,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DownloadImage }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "DownloadImage")
+    public JAXBElement<DownloadImage> createDownloadImage(DownloadImage value) {
+        return new JAXBElement<DownloadImage>(_DownloadImage_QNAME, DownloadImage.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DownloadImageResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "DownloadImageResponse")
+    public JAXBElement<DownloadImageResponse> createDownloadImageResponse(DownloadImageResponse value) {
+        return new JAXBElement<DownloadImageResponse>(_DownloadImageResponse_QNAME, DownloadImageResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ListImages }{@code >}}
      * 
      */
@@ -398,6 +436,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://imagenes.me.org/", name = "SearchbyTitleResponse")
     public JAXBElement<SearchbyTitleResponse> createSearchbyTitleResponse(SearchbyTitleResponse value) {
         return new JAXBElement<SearchbyTitleResponse>(_SearchbyTitleResponse_QNAME, SearchbyTitleResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "imageBytes", scope = RegisterImage.class)
+    public JAXBElement<byte[]> createRegisterImageImageBytes(byte[] value) {
+        return new JAXBElement<byte[]>(_RegisterImageImageBytes_QNAME, byte[].class, RegisterImage.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = DownloadImageResponse.class)
+    public JAXBElement<byte[]> createDownloadImageResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_DownloadImageResponseReturn_QNAME, byte[].class, DownloadImageResponse.class, ((byte[]) value));
     }
 
 }
