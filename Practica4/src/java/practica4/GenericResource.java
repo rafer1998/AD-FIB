@@ -82,7 +82,8 @@ public class GenericResource {
             String pathFile = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica4\\web\\images\\" + fileDetail.getFileName();
             writeToFile(uploadedInputStream, pathFile);
             String output = "File uploaded to : " + pathFile;
-            System.out.println(output);            
+            System.out.println(output);  
+            
             
             //subir la imagen a la BD
             PreparedStatement statement;

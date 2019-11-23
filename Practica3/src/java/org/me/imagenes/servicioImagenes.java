@@ -40,6 +40,7 @@ public class servicioImagenes {
     @WebMethod(operationName = "RegisterImage")
     public int RegisterImage(@WebParam(name = "Image") Image Image, @WebParam(name = "imageBytes") byte[] imageBytes) {
         final String filePath = ("C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica3\\web\\imagenes\\" + Image.getFichero());
+        //System.out.println(new File(".").getAbsolutePath());
         Connection connection = null;
         try {   
             //Subida fichero al sistema
