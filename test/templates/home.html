@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for products in products %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ products.author }}</a>
+              <small class="text-muted">{{ products.date_posted }}</small>
+            </div>
+            <h2><a class="article-title" href="#">{{ products.product }}</a></h2>
+            <p class="article-content"> Units: {{ products.units }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

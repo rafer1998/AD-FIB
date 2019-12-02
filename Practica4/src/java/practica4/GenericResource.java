@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -82,6 +83,7 @@ public class GenericResource {
             String pathFile = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica4\\web\\images\\" + fileDetail.getFileName();
             writeToFile(uploadedInputStream, pathFile);
             String output = "File uploaded to : " + pathFile;
+            //System.out.println("PATH: " + Paths.get(".").toAbsolutePath().normalize().toString());
             System.out.println(output);  
             
             
@@ -183,8 +185,8 @@ public class GenericResource {
         String resultado = "<head><style> body {background-color: lightblue; text-align: center; }</style></head>";
         
         try {      
-            String filePathEntrada = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica4\\web\\images\\" + fileName;
-            String filePathSalida = "C:\\Users\\ruben\\Downloads\\" + fileName;
+            String filePathEntrada = "C:\\Users\\ruben\\Documents\\GitHub\\AD-FIB\\Practica4\\web\\images\\" + fileName + ".png";
+            String filePathSalida = "C:\\Users\\ruben\\Downloads\\" + fileName + ".png";
             
             File file = new File(filePathEntrada);
             FileInputStream fis = new FileInputStream(file);
