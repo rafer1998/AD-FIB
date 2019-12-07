@@ -52,8 +52,13 @@ class UpdateAccountForm(FlaskForm):
                 # Si el usuario existe -> error
                 raise ValidationError('El email ya esta escogido. Escribe uno diferente.')
 
+
+class SearchForm(FlaskForm):
+    productName = StringField('Nombre Producto', validators=[DataRequired()])
+    submit = SubmitField('Buscar')
+
 class AddProductForm(FlaskForm):
     nameArt = StringField('Nom del article', validators=[DataRequired()])
-    date_posted = StringField('Data de pujada', validators=[DataRequired()])
     units = StringField('Unitats que poso en venda', validators=[DataRequired()])
-    submit = SubmitField('Registrar')
+    submit = SubmitField('Añadir Producto')
+

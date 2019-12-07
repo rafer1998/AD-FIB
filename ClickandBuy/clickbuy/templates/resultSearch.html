@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Productos Encontrados: {{nameProduct }}</h1>
+    {% for products in products %}
+        {% if products.product == nameProduct %}
+            <article class="media content-section">
+              <div class="media-body">
+                <div class="article-metadata">
+                  <a class="mr-2" href="#">{{ products.author }}</a>
+                  <small class="text-muted">{{ products.date_posted }}</small>
+                </div>
+                <h2><a class="article-title" href="#">{{ products.product }}</a></h2>
+                <p class="article-content"> Units: {{ products.units }}</p>
+                <button class="btn btn-outline-info">Comprar</button>
+              </div>
+            </article>
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

@@ -1,9 +1,10 @@
+from datetime import date
+
 from clickbuy.models import User, Products
 from flask import render_template, url_for, flash, redirect, request
 from clickbuy import app, db, bcrypt
-from clickbuy.forms import RegistrationForm, LoginForm, UpdateAccountForm, AddProductForm
+from clickbuy.forms import RegistrationForm, LoginForm, UpdateAccountForm, SearchForm, AddProductForm
 from flask_login import login_user, current_user, logout_user, login_required
-from datetime import date
 import secrets
 import os
 
@@ -28,19 +29,6 @@ products = [
 def home():
     return render_template('home.html', products=products)
 
-@app.route('/addproduct', methods=['GET', 'POST'])
-def addproduct():
-    form = AddProductForm()
-    if form.validate_on_submit():
-        products= Products(id=3, nameArt=form.nameArt.data, units=form.units.data, user_id=current_user, date=date.today())
-        db.session.add(products)
-        db.session.commit()
-        flash(f'Se ha creado correctamente creado el producto!. Ya puedes iniciar sesion.', 'success')
-        return redirect(url_for('home'))
-
-    return render_template('addproduct.html', title='Afegir un producte', form=form)
-
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -56,10 +44,25 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
+
         flash(f'Se ha creado correctamente creado la cuenta!. Ya puedes iniciar sesion.', 'success')
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/addproduct', methods=['GET', 'POST'])
+def addproduct():
+    # Anadir un nuevo producto
+    form = AddProductForm()
+    if form.validate_on_submit():
+        products = Products(nameArt=form.nameArt.data, units=form.units.data, user_id=current_user.id)
+        db.session.add(products)
+        db.session.commit()
+
+        flash(f'Se ha creado correctamente creado el producto!.', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('addproduct.html', title='Afegir un producte', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -122,3 +125,20 @@ def account():
 
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file, form=form)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    # Buscar un producto
+    form = SearchForm()
+    if form.validate_on_submit():
+        return redirect(url_for('resultSearch', nameProduct=form.productName.data))
+
+    return render_template('search.html', title='Search', form=form)
+
+
+@app.route('/resultSearch/<string:nameProduct>')
+def resultSearch(nameProduct):
+    # Mostrar los productos encontrados
+    return render_template('resultSearch.html', products=products, nameProduct=nameProduct)
+
