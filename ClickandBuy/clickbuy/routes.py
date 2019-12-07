@@ -8,25 +8,10 @@ from flask_login import login_user, current_user, logout_user, login_required
 import secrets
 import os
 
-products = [
-    {
-        'author' : 'Ruben Barcelo',
-        'product' : 'Coche',
-        'units' : '2',
-        'date_posted' : 'April 20, 2018'
-    },
-{
-        'author' : 'Carlos Jimenez',
-        'product' : 'Moto',
-        'units' : '1',
-        'date_posted' : 'May 25, 2018'
-    }
-]
-
-
 @app.route('/')
 @app.route('/home')
 def home():
+    products = Products.query.all()
     return render_template('home.html', products=products)
 
 
@@ -49,20 +34,6 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
-
-@app.route('/addproduct', methods=['GET', 'POST'])
-def addproduct():
-    # Anadir un nuevo producto
-    form = AddProductForm()
-    if form.validate_on_submit():
-        products = Products(nameArt=form.nameArt.data, units=form.units.data, user_id=current_user.id)
-        db.session.add(products)
-        db.session.commit()
-
-        flash(f'Se ha creado correctamente creado el producto!.', 'success')
-        return redirect(url_for('home'))
-
-    return render_template('addproduct.html', title='Afegir un producte', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -127,6 +98,22 @@ def account():
     return render_template('account.html', title='Account', image_file=image_file, form=form)
 
 
+@app.route('/addproduct', methods=['GET', 'POST'])
+def addproduct():
+    # Anadir un nuevo producto
+    form = AddProductForm()
+    if form.validate_on_submit():
+        products = Products(nameArt=form.nameArt.data, units=form.units.data, user_id=current_user.id, content=form.content.data)
+        db.session.add(products)
+        db.session.commit()
+
+        flash(f'Se ha creado correctamente creado el producto!.', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('addproduct.html', title='Afegir un producte', form=form)
+
+
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     # Buscar un producto
@@ -140,5 +127,6 @@ def search():
 @app.route('/resultSearch/<string:nameProduct>')
 def resultSearch(nameProduct):
     # Mostrar los productos encontrados
+    products = Products.query.all()
     return render_template('resultSearch.html', products=products, nameProduct=nameProduct)
 

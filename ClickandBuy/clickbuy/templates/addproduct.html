@@ -4,24 +4,33 @@
         <form method="post" action="">
             {{form.hidden_tag()}}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4"> Afegeix un producte!!</legend>
+                <legend class="border-bottom mb-4"> Afegeix un producte</legend>
                 <div class="form-group">
                     {{form.nameArt.label(class="form-control-label")}}
                     {{form.nameArt(class="form-control form-control-lg")}}
                 </div>
+                 <div class="form-group">
+                    {{form.content.label(class="form-control-label")}}
+                    {{form.content(class="form-control form-control-lg")}}
+                </div>
                 <div class="form-group">
                     {{form.units.label(class="form-control-label")}}
-                    {{form.units(class="form-control form-control-lg")}}
+
+                    {% if form.units.errors %}
+                        {{ form.units(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.units.errors %}
+                                <span> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.units(class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
             </fieldset>
             <div class="form-group">
                 {{form.submit(class="btn btn-outline-info")}}
             </div>
         </form>
-    </div>
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Estas ya registrado? <a class="ml-2" href="{{ url_for('login') }}">Iniciar Sesion</a>
-        </small>
     </div>
 {% endblock content %}

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, EqualTo, Email, ValidationError
 from clickbuy.models import User
 from flask_login import current_user
@@ -58,7 +58,8 @@ class SearchForm(FlaskForm):
     submit = SubmitField('Buscar')
 
 class AddProductForm(FlaskForm):
-    nameArt = StringField('Nom del article', validators=[DataRequired()])
-    units = StringField('Unitats que poso en venda', validators=[DataRequired()])
+    nameArt = StringField('Nombre del producto', validators=[DataRequired()])
+    content = TextAreaField('Descripcion', validators=[DataRequired()])
+    units = IntegerField('Unidades', validators=[DataRequired()])
     submit = SubmitField('Añadir Producto')
 
