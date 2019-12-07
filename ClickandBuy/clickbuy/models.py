@@ -25,7 +25,8 @@ class Products(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.String, nullable=False)
     units = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Products('{self.nameArt}','{self.date_posted}','{self.content}','{self.units}')"
+        return f"Products('{self.nameArt}','{self.date_posted}','{self.content}','{self.units},'{self.price}')"

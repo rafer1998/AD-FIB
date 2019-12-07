@@ -60,6 +60,7 @@ class SearchForm(FlaskForm):
 class AddProductForm(FlaskForm):
     nameArt = StringField('Nombre del producto', validators=[DataRequired()])
     content = TextAreaField('Descripcion', validators=[DataRequired()])
+    price = IntegerField('Precio', validators=[DataRequired()])
     units = IntegerField('Unidades', validators=[DataRequired()])
     submit = SubmitField('Añadir Producto')
 

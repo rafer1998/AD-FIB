@@ -10,7 +10,11 @@
             </div>
             <h2><a class="article-title" href="#">{{ products.nameArt }}</a></h2>
             <h5><a class="article-title" href="#">Descripcion: {{ products.content }}</a></h5>
-            <p class="article-content"> Units: {{ products.units }}</p>
+            <h6><i>Precio: {{ products.price }} €</i></h6>
+            <h6><i> Unidades: {{ products.units }} </i></h6>
+            {% if products.author.username != current_user.username %}
+              <button type="button" class="btn btn-outline-info" onclick="window.location.href='{{ url_for('buyproduct', id=products.id)}}'">Comprar</button>
+            {% endif %}
           </div>
         </article>
     {% endfor %}

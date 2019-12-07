@@ -103,7 +103,7 @@ def addproduct():
     # Anadir un nuevo producto
     form = AddProductForm()
     if form.validate_on_submit():
-        products = Products(nameArt=form.nameArt.data, units=form.units.data, user_id=current_user.id, content=form.content.data)
+        products = Products(nameArt=form.nameArt.data, units=form.units.data, user_id=current_user.id, content=form.content.data, price=form.price.data)
         db.session.add(products)
         db.session.commit()
 
@@ -129,4 +129,11 @@ def resultSearch(nameProduct):
     # Mostrar los productos encontrados
     products = Products.query.all()
     return render_template('resultSearch.html', products=products, nameProduct=nameProduct)
+
+
+@app.route('/buyproduct/<int:id>')
+def buyproduct(id):
+    # Comprar productos
+    products = Products.query.all()
+    return render_template('buyproduct.html', products=products, id=id)
 
