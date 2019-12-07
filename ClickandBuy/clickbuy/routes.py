@@ -3,6 +3,7 @@ from flask import render_template, url_for, flash, redirect, request
 from clickbuy import app, db, bcrypt
 from clickbuy.forms import RegistrationForm, LoginForm, UpdateAccountForm, AddProductForm
 from flask_login import login_user, current_user, logout_user, login_required
+from datetime import date
 import secrets
 import os
 
@@ -27,13 +28,18 @@ products = [
 def home():
     return render_template('home.html', products=products)
 
-@app.route('/addproduct')
+@app.route('/addproduct', methods=['GET', 'POST'])
 def addproduct():
     form = AddProductForm()
-    product = User(nameArt=form.nameArt.data, date_posted=form.date_posted.data, units=form.units.data)
-    db.session.add(product)
-    db.session.commit()
-    return render_template('addproduct.html', title= 'Afegir un producte', form=form)
+    if form.validate_on_submit():
+        products= Products(id=3, nameArt=form.nameArt.data, units=form.units.data, user_id=current_user, date=date.today())
+        db.session.add(products)
+        db.session.commit()
+        flash(f'Se ha creado correctamente creado el producto!. Ya puedes iniciar sesion.', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('addproduct.html', title='Afegir un producte', form=form)
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -50,7 +56,6 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-
         flash(f'Se ha creado correctamente creado la cuenta!. Ya puedes iniciar sesion.', 'success')
         return redirect(url_for('login'))
 
