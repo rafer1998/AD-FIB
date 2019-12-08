@@ -12,8 +12,11 @@
             <h5><a class="article-title" href="#">Descripcion: {{ products.content }}</a></h5>
             <h6><i>Precio: {{ products.price }} €</i></h6>
             <h6><i> Unidades: {{ products.units }} </i></h6>
-            {% if products.author.username != current_user.username %}
+            {% if current_user.is_authenticated and products.author.username != current_user.username %}
               <button type="button" class="btn btn-outline-info" onclick="window.location.href='{{ url_for('buyproduct', id=products.id)}}'">Comprar</button>
+            {% endif %}
+            {% if current_user.is_authenticated and products.author.username == current_user.username %}
+              <button type="button" class="btn btn-outline-danger">Eliminar</button>
             {% endif %}
           </div>
         </article>

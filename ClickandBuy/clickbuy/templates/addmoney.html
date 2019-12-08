@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-seciton">
+        <form method="post" action="">
+            {{form.hidden_tag()}}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4"> Añade saldo a tu cuenta</legend>
+                <div class="form-group">
+                    {{form.amountMoney.label(class="form-control-label")}}
+
+                    {% if form.amountMoney.errors %}
+                        {{ form.amountMoney(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.amountMoney.errors %}
+                                <span> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.amountMoney(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+    </div>
+{% endblock content %}

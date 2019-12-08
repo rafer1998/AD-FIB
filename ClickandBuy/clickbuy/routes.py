@@ -3,7 +3,7 @@ from datetime import date
 from clickbuy.models import User, Products
 from flask import render_template, url_for, flash, redirect, request
 from clickbuy import app, db, bcrypt
-from clickbuy.forms import RegistrationForm, LoginForm, UpdateAccountForm, SearchForm, AddProductForm
+from clickbuy.forms import RegistrationForm, LoginForm, UpdateAccountForm, SearchForm, AddProductForm, AddMoneyForm
 from flask_login import login_user, current_user, logout_user, login_required
 import secrets
 import os
@@ -137,3 +137,16 @@ def buyproduct(id):
     products = Products.query.all()
     return render_template('buyproduct.html', products=products, id=id)
 
+
+@app.route('/addmoney', methods=['GET', 'POST'])
+def addmoney():
+    # Añadir saldo al wallet
+    form = AddMoneyForm()
+    if form.validate_on_submit():
+        current_user.wallet += form.amountMoney.data
+        db.session.commit()
+
+        flash(f'Se ha añadido correctamente el saldo!', 'success')
+        return redirect(url_for('account'))
+
+    return render_template('addmoney.html', title='Añadir dinero', form=form)

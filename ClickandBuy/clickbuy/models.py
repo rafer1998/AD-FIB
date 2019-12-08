@@ -12,11 +12,12 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.png')
+    wallet = db.Column(db.Integer, nullable=False, default=0)
     password = db.Column(db.String(60), nullable=False)
     products = db.relationship('Products', backref='author', lazy=True)
 
     def __repr__(self):
-        return f"User('{self.username}','{self.email}','{self.image_file}')"
+        return f"User('{self.username}','{self.email}','{self.image_file}','{self.wallet}')"
 
 #Modelo de Producto
 class Products(db.Model):

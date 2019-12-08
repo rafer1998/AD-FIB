@@ -64,3 +64,7 @@ class AddProductForm(FlaskForm):
     units = IntegerField('Unidades', validators=[DataRequired()])
     submit = SubmitField('Añadir Producto')
 
+class AddMoneyForm(FlaskForm):
+    amountMoney = IntegerField('Cantidad de dinero', validators=[DataRequired()])
+    submit = SubmitField('Añadir Dinero')
+
