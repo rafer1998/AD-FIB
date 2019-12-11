@@ -1,8 +1,8 @@
 from datetime import date
 
 from clickbuy.models import User, Products
-from flask import render_template, url_for, flash, redirect, request
-from clickbuy import app, db, bcrypt
+from flask import render_template, url_for, flash, redirect, request, abort
+from clickbuy import app, db,bcrypt
 from clickbuy.forms import RegistrationForm, LoginForm, UpdateAccountForm, SearchForm, AddProductForm, AddMoneyForm
 from flask_login import login_user, current_user, logout_user, login_required
 import secrets
@@ -134,8 +134,30 @@ def resultSearch(nameProduct):
 @app.route('/buyproduct/<int:id>')
 def buyproduct(id):
     # Comprar productos
-    products = Products.query.all()
-    return render_template('buyproduct.html', products=products, id=id)
+    products = Products.query.get_or_404(id)
+    if products.author == current_user:
+        abort(403)
+    if products.price <= current_user.wallet:
+        current_user.wallet -= products.price
+        db.session.delete(products)
+        db.session.commit()
+        flash(f'Se ha comprado correctamente el producto!.', 'success')
+    else:
+        flash(f'No tienes dinero suficiente para comprar el producto!.', 'danger')
+
+    return redirect(url_for('home'))
+
+@app.route('/deleteproduct/<int:id>', methods=['GET', 'POST'])
+@login_required
+def deleteproduct(id):
+    # Borrar un producto
+    products = Products.query.get_or_404(id)
+    if products.author != current_user:
+        abort(403)
+    db.session.delete(products)
+    db.session.commit()
+    flash(f'Se ha borrado correctamente el producto!.', 'success')
+    return redirect(url_for('home'))
 
 
 @app.route('/addmoney', methods=['GET', 'POST'])

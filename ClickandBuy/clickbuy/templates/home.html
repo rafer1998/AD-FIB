@@ -16,7 +16,7 @@
               <button type="button" class="btn btn-outline-info" onclick="window.location.href='{{ url_for('buyproduct', id=products.id)}}'">Comprar</button>
             {% endif %}
             {% if current_user.is_authenticated and products.author.username == current_user.username %}
-              <button type="button" class="btn btn-outline-danger">Eliminar</button>
+              <button type="button" class="btn btn-outline-danger" onclick="window.location.href='{{ url_for('deleteproduct', id=products.id)}}'" formmethod="post">Eliminar</button>
             {% endif %}
           </div>
         </article>
